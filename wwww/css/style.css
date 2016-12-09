@@ -1,0 +1,51 @@
+.bs-callout-info {
+    border-left-color: #1b809e !important;
+}
+
+.bs-callout {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #ddd;
+    border-left-width: 5px;
+    border-radius: 3px;
+    background-color: white;
+}
+
+.footer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+.jersey {
+  height: 30px;
+  width: 30px;
+  margin-right: 10px;
+}
+
+table {
+  background-color: white;
+}
+
+body {
+    background-color: white;
+}
+
+tbody {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+#background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../res/bg.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100%;
+    opacity: 0.1;
+}
