@@ -1,0 +1,9 @@
+gnore all dotfiles...
+.*
+
+# Except for .gitignore
+!.gitignore
+
+# Mac Stuff
+.DS_Store
+
