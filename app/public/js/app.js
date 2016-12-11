@@ -2,7 +2,7 @@ var athletesMap = new Map();
 var fastestRider;
 var maxSpeed = 0;
 var genesisEpoch = 1481415064;
-var serverUrl = 'http://jelles-macbook-pro-2.local:3000';
+var serverUrl = 'https://radiant-taiga-80822.herokuapp.com/';
 
 //Compose template string
 String.prototype.compose = (function (){
