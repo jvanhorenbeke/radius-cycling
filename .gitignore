@@ -7,3 +7,6 @@ gnore all dotfiles...
 # Mac Stuff
 .DS_Store
 
+# Node dependencies
+app/node_modules/*
+
