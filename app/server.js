@@ -5,7 +5,9 @@ const database = require('./database');
 const strava = require('./strava');
 
 const server = new Hapi.Server();
-server.connection({ ~~process.env.PORT || 3000 });
+// let heroku set the port
+var herokuPort = process.env.PORT || 3000
+server.connection({ port: herokuPort });
 
 //Every 2hrs we retrieve new activities from Strava and store it in our database
 var milisInMinutes = 60*1000;
