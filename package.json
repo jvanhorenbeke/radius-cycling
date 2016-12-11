@@ -1,0 +1,31 @@
+{
+  "name": "radius-cycling",
+  "version": "1.0.0",
+  "description": "Radius Cycling Leaderboard",
+  "main": "app/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/jvanhorenbeke/radius-cycling.git"
+  },
+  "keywords": [
+    "cycling",
+    "node",
+    "strava"
+  ],
+  "author": "Jelle Vanhorenbeke",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/jvanhorenbeke/radius-cycling/issues"
+  },
+  "homepage": "https://gitlab.com/jvanhorenbeke/radius-cycling#README",
+  "dependencies": {
+    "axios": "^0.15.3",
+    "hapi": "^16.0.1",
+    "inert": "^4.0.3",
+    "moment": "^2.17.1",
+    "sqlite3": "^3.1.8"
+  }
+}
