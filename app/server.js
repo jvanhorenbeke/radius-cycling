@@ -17,6 +17,15 @@ setInterval(function() {
 // ----------------------------- ROUTES -----------------------------
 server.route({
     method: 'GET',
+    path: '/update-cache',
+    handler: function (request, reply) {
+        console.log('Triggered... Updating Cache with latest Strava activities for Club');
+        strava.cacheLatestActivities();
+    }
+});
+
+server.route({
+    method: 'GET',
     path: '/activities',
     handler: function (request, reply) {
         database.init();
