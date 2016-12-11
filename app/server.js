@@ -5,7 +5,7 @@ const database = require('./database');
 const strava = require('./strava');
 
 const server = new Hapi.Server();
-server.connection({ port: 3000 });
+server.connection({ ~~process.env.PORT || 3000 });
 
 //Every 2hrs we retrieve new activities from Strava and store it in our database
 var milisInMinutes = 60*1000;

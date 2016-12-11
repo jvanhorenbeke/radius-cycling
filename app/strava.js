@@ -1,7 +1,7 @@
 'use strict';
 
 const moment = require('moment');
-const bearerToken = 'Bearer ';
+const bearerToken = process.env.STRAVA_KEY;
 const database = require('./database');
 const axios = require('axios');
 axios.defaults.baseURL = 'https://www.strava.com/api/v3';
