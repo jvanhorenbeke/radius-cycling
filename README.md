@@ -9,7 +9,7 @@ Radius Cycling Leaderboard uses a Year to date ranking system based on the [Stra
 1. Install [node.js](https://nodejs.org/en/)
 1. Run `npm install` to install all dependencies
 1. Export your Strava Access Token as the env variable `STRAVA_KEY`
-1. run `node app/server.js`
+1. run `npm start`
 
 ### TO DO list features:
 - Include points. If rider w/ radius team miles X 1.5
