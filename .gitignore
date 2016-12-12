@@ -10,3 +10,4 @@ gnore all dotfiles...
 # Node dependencies
 app/node_modules/*
 
+npm-debug.log
