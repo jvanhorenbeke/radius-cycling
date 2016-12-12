@@ -1,8 +1,7 @@
 var athletesMap = new Map();
 var fastestRider;
 var maxSpeed = 0;
-var genesisEpoch = 1481415064;
-var serverUrl = 'https://radius-cycling.herokuapp.com';
+var serverUrl = '';
 
 //Compose template string
 String.prototype.compose = (function (){
@@ -16,16 +15,16 @@ String.prototype.compose = (function (){
 
 //Because of Strava API's limitation we need to hardcode the distances of older activities
 var loadFixedValues = function() {
-    update(3014007, milesToMeters(2696.8), feetToMeters(191946), '2016-12-02T14:28:21Z');//Philip
-    update(9022454, milesToMeters(1530.6), feetToMeters(74009), '2016-12-02T14:28:21Z');//Jelle
-    update(1911372, milesToMeters(1605), feetToMeters(111027), '2016-12-02T14:28:21Z');//Preston
-    update(9757503, milesToMeters(1928), feetToMeters(145335), '2016-12-02T14:28:21Z');//Evan
-    update(74954, milesToMeters(1711.7), feetToMeters(78215), '2016-12-02T14:28:21Z');//Pablo
-    update(1211014, milesToMeters(2235.1), feetToMeters(152959), '2016-12-02T14:28:21Z');//Tyler W
-    update(14531982, milesToMeters(300.8), feetToMeters(18202), '2016-12-02T14:28:21Z');//Antoine
-    update(1896314, milesToMeters(520.3), feetToMeters(32336), '2016-12-02T14:28:21Z');//Tyler P.
-    update(13205409, milesToMeters(843.3), feetToMeters(44682), '2016-12-02T14:28:21Z');//Yoshio
-    update(4190437, milesToMeters(683.2), feetToMeters(26440), '2016-12-02T14:28:21Z');//Dan
+    update(3014007, milesToMeters(1694.8), feetToMeters(121244), '2016-12-02T14:28:21Z');//Philip
+    update(9022454, milesToMeters(401), feetToMeters(29324), '2016-12-02T14:28:21Z');//Jelle
+    update(1911372, milesToMeters(594), feetToMeters(40896), '2016-12-02T14:28:21Z');//Preston
+    update(9757503, milesToMeters(478), feetToMeters(28967), '2016-12-02T14:28:21Z');//Evan
+    update(74954, milesToMeters(617), feetToMeters(31952), '2016-12-02T14:28:21Z');//Pablo
+    update(1211014, milesToMeters(1739), feetToMeters(113989), '2016-12-02T14:28:21Z');//Tyler W
+    update(14531982, milesToMeters(219.8), feetToMeters(11687), '2016-12-02T14:28:21Z');//Antoine
+    update(1896314, milesToMeters(143.3), feetToMeters(8750), '2016-12-02T14:28:21Z');//Tyler P.
+    update(13205409, milesToMeters(19), feetToMeters(2195), '2016-12-02T14:28:21Z');//Yoshio
+    update(4190437, milesToMeters(656.2), feetToMeters(25069), '2016-12-02T14:28:21Z');//Dan
     update(13718617, milesToMeters(223.8), feetToMeters(9797), '2016-12-02T14:28:21Z');//Isaac
     update(2339027, milesToMeters(102.8), feetToMeters(8543), '2016-12-02T14:28:21Z');//Nick
     update(11759106, milesToMeters(324.6), feetToMeters(10794), '2016-12-02T14:28:21Z');//Austin
@@ -58,12 +57,6 @@ var loadClubAcitivities = function() {
   $.ajax({url: serverUrl + "/activities"})
    .done(function (data) {
       $.each(data, function(i, activity) {
-        var activityEpoch = moment.utc(activity.start_date, "YYYY-MM-DDTHH:mm:ssZ");
-        activityEpoch = activityEpoch.unix();
-        if (activityEpoch < genesisEpoch) {
-            return;
-        }
-
         if (activity.type == 'Ride' && activity.commute == false) {
           update(activity.athlete.id, activity.distance, activity.total_elevation_gain, activity.start_date);
           updateMaxSpeed(activity.max_speed, activity.athlete.id, activity.athlete.firstname + ' ' + activity.athlete.lastname);
