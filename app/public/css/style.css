@@ -62,6 +62,7 @@ tbody tr:nth-child(-n+1) {
 }
 
 h2 {
+    text-shadow: 1px 1px 5px black;
     color: white;
 }
 

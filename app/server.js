@@ -87,6 +87,19 @@ server.register(require('inert'), (err) => {
 
     server.route({
         method: 'GET',
+        path: '/database/' + process.env.DB_KEY,
+        handler: {
+            file: {
+                path: 'data.db',
+                filename: 'data.db',
+                mode: 'attachment',
+                lookupCompressed: true
+            }
+        }
+    });
+
+    server.route({
+        method: 'GET',
         path: '/',
         handler: function (request, reply) {
             reply.file('./public/index.html');
