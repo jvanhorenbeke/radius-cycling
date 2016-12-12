@@ -13,6 +13,7 @@ const hawkHillSegmentId = 229781;
 const poloFieldSegmentId = 432873;
 
 var retrieveClubMembers = function(callback) {
+    console.log('[Strava] retrieving Club Members');
     axios.get("clubs/"+clubId+"/members?per_page=200")
         .then(function (response) {
             callback(response.data);
@@ -23,6 +24,7 @@ var retrieveClubMembers = function(callback) {
 };
 
 var retrieveSegment = function(segmentId, callback) {
+    console.log('[Strava] retrieving Segment: ' + segmentId);
     axios.get("/segments/"+segmentId+"/leaderboard?club_id="+clubId+"&per_page=50")
         .then(function (response) {
             callback(response.data);
@@ -33,7 +35,8 @@ var retrieveSegment = function(segmentId, callback) {
 };
 
 var cacheLatestActivities = function() {
-    axios.get("/clubs/"+clubId+"/activities?per_page=50")
+    console.log('[Strava] Updating activities in database/cache');
+    axios.get("/clubs/"+clubId+"/activities?per_page=100")
         .then(function (response) {
             processActivities(response.data);
         })
