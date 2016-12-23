@@ -113,3 +113,18 @@ h2 small {
 #radiusMaillot thead {
     background-color: #3a8ecb;
 }
+
+/*Radius Rules page*/
+.rules-bg {
+    background-color: black;
+    opacity: 0.3;
+    border-radius: 10px;
+    height: 650px;
+    margin: 30px auto;
+}
+
+.rules {
+    margin: -700px auto;
+    padding: 50px;
+    color: white;
+}
