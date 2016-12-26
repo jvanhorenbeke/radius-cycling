@@ -85,36 +85,7 @@ var retrieveGeneralLeaderboard = function(callback) {
 }
 
 var retrievePolkaLeaderboard = function(callback) {
-    athletesMap = new Map();
-    series([
-        function(callback) {
-            retrieveClubMembers(callback);
-        },
-        function(callback) {
-            loadClubAcitivities(callback);
-        }
-    ], function (err, results) {
-        if (err !== undefined) {
-            console.log('Something went wrong: ' + err);
-            return;
-        }
-
-        loadFixedValues();
-        var polkaStandings = [...athletesMap.values()];
-        polkaStandings.sort(function (a, b) {
-          if (a.elevation > b.elevation) {
-            return -1;
-          }
-          if (a.elevation < b.elevation) {
-            return 1;
-          }
-
-          return 0;
-        });
-
-        if (callback !== undefined) callback(polkaStandings);
-    });
-};
+}
 
 /*******************************************************************************
  Cache Strava Activities and Members:
@@ -148,6 +119,5 @@ var loadFixedValues = function() {
 module.exports = {
     retrieveRadiusLeaderboard: function(cb){strava.retrieveSegment(stravaIds.HAWK_HILL_SEGMENT_ID, cb)},
     retrieveSprinterLeaderboard: function(cb){strava.retrieveSegment(stravaIds.POLO_FIELD_SEGMENT_ID, cb)},
-    retrievePolkaLeaderboard: function(cb){retrievePolkaLeaderboard(cb)},
     retrieveGeneralLeaderboard: function(cb){retrieveGeneralLeaderboard(cb)}
 };

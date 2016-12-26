@@ -79,16 +79,6 @@ server.route({
     }
 });
 
-server.route({
-    method: 'GET',
-    path: '/polka',
-    handler: function (request, reply) {
-        strava.retrievePolkaLeaderboard(function(data) {
-            reply(data);
-        });
-    }
-});
-
 server.register(require('inert'), (err) => {
 
     if (err) {
