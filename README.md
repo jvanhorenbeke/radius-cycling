@@ -20,7 +20,9 @@ Radius Cycling Leaderboard uses a Year to date ranking system based on the [Stra
 - Improve logging
 - Clean up jQuery bindings, use better framework
 - Store team members as well
-- Import old activities in DB, hardcode delta.
+- Import old activities in DB, hardcoded delta.
+- Links CSS in rules HTML.
+- Update ranking every 2 hours and store in db.
 
 ### How does it look?:
 ![alt tag](https://gitlab.com/jvanhorenbeke/radius-cycling/raw/master/screenshot.png)
