@@ -126,6 +126,14 @@ server.register(require('inert'), (err) => {
             reply.file('./public/index.html');
         }
     });
+
+    server.route({
+        method: 'GET',
+        path: '/rules',
+        handler: function (request, reply) {
+            reply.file('./public/rules.html');
+        }
+    });
 });
 
 server.start((err) => {

@@ -127,4 +127,5 @@ h2 small {
     margin: -700px auto;
     padding: 50px;
     color: white;
+    z-index: 10;
 }
