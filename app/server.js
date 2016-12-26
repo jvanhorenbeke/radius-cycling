@@ -24,6 +24,7 @@ server.route({
     handler: function (request, reply) {
         console.log('Triggered... Updating Cache with latest Strava activities for Club');
         strava.cacheLatestActivities();
+        reply('Updating cache');
     }
 });
 
