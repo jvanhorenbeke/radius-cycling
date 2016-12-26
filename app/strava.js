@@ -3,14 +3,13 @@
 const moment = require('moment');
 const bearerToken = process.env.STRAVA_KEY;
 const database = require('./database');
+const stravaIds = require('./stravaIds');
 const axios = require('axios');
 axios.defaults.baseURL = 'https://www.strava.com/api/v3';
 axios.defaults.headers.common['Authorization'] = bearerToken;
 
 // Strava Specific
 const clubId = '197635';
-const hawkHillSegmentId = 229781;
-const poloFieldSegmentId = 432873;
 
 var retrieveClubMembers = function(callback) {
     console.log('[Strava] retrieving Club Members');
@@ -34,6 +33,9 @@ var retrieveSegment = function(segmentId, callback) {
         });
 };
 
+/*******************************************************************************
+ Cache Strava Activities and Members:
+*******************************************************************************/
 var cacheLatestActivities = function() {
     console.log('[Strava] Updating activities in database/cache');
     axios.get("/clubs/"+clubId+"/activities?per_page=100")
@@ -45,6 +47,10 @@ var cacheLatestActivities = function() {
         });
 };
 
+var cacheClubMembers = function() {
+    //TODO
+}
+
 var processActivities = function(json) {
     database.init();
     json.forEach(storeActivity);
@@ -54,12 +60,13 @@ var processActivities = function(json) {
 
 var storeActivity = function(activity) {
     var startDate = moment.utc(activity.start_date, "YYYY-MM-DDThh:mm:ssZ");
-    database.addActivity(startDate.unix(), activity.id, activity.athlete.id, activity.type, JSON.stringify(activity));
+    database.addActivity(startDate.unix(), activity.id, activity.athlete.id,
+                         activity.type, JSON.stringify(activity));
 };
 
+/******************************************************************************/
 module.exports = {
-  cacheLatestActivities: function(){cacheLatestActivities()},
-  retrieveClubMembers: function(cb){retrieveClubMembers(cb)},
-  retrieveRadiusLeaderboard: function(cb){retrieveSegment(hawkHillSegmentId, cb)},
-  retrieveSprinterLeaderboard: function(cb){retrieveSegment(poloFieldSegmentId, cb)}
+    cacheLatestActivities: function(){cacheLatestActivities()},
+    retrieveClubMembers: function(cb){retrieveClubMembers(cb)},
+    retrieveSegment: function(id, cb){retrieveSegment(id, cb)}
 };

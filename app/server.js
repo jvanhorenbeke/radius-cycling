@@ -3,6 +3,7 @@
 const Hapi = require('hapi');
 const database = require('./database');
 const strava = require('./strava');
+const rankings = require('./rankings');
 
 const server = new Hapi.Server();
 // let heroku set the port
@@ -52,7 +53,7 @@ server.route({
     method: 'GET',
     path: '/radius',
     handler: function (request, reply) {
-        strava.retrieveRadiusLeaderboard(function(data) {
+        rankings.retrieveRadiusLeaderboard(function(data) {
             reply(data);
         });
     }
@@ -62,7 +63,27 @@ server.route({
     method: 'GET',
     path: '/sprinters',
     handler: function (request, reply) {
-        strava.retrieveSprinterLeaderboard(function(data) {
+        rankings.retrieveSprinterLeaderboard(function(data) {
+            reply(data);
+        });
+    }
+});
+
+server.route({
+    method: 'GET',
+    path: '/general',
+    handler: function (request, reply) {
+        rankings.retrieveGeneralLeaderboard(function(data) {
+            reply(data);
+        });
+    }
+});
+
+server.route({
+    method: 'GET',
+    path: '/polka',
+    handler: function (request, reply) {
+        strava.retrievePolkaLeaderboard(function(data) {
             reply(data);
         });
     }
