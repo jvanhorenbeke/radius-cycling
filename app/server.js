@@ -4,8 +4,8 @@ const Hapi = require('hapi');
 const database = require('./database');
 const strava = require('./strava');
 const rankings = require('./rankings');
-
 const server = new Hapi.Server();
+
 // let heroku set the port
 var herokuPort = process.env.PORT || 3000
 server.connection({ port: herokuPort });

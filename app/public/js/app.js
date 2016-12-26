@@ -110,17 +110,29 @@ var generatePolkaRankings = function(polkaStandings) {
       '<th scope="row">{{id}}</th>'+
       '<td>{{name}}</td>'+
       '<td>{{elevation}}</td>'+
-      '<td>{{time}}</td>'+
+    //   '<td>{{time}}</td>'+
   '</tr>';
 
+  var minClimbs = 2;
   polkaStandings.sort(function (a, b) {
-    if (a.elevation > b.elevation) {
-      return -1;
-    }
-    if (a.elevation < b.elevation) {
-      return 1;
-    }
+    // if (a.polka_climbs < minClimbs) {
+    //     if (b.polka_climbs < minClimbs) {
+    //         var dElev = b.elevation - a.elevation;
+    //         if(dElev) return dElev;
+    //     }
+    //     return 1;
+    // }
+    //
+    // if (b.polka_climbs < minClimbs) {
+    //     return -1;
+    // }
 
+    // Sort by time
+    // var dTime = a.time - b.time;
+    // if(dTime) return dTime;
+
+    var dElevation = b.elevation - a.elevation;
+    if(dElevation) return dElevation;
     return 0;
   });
 
@@ -129,7 +141,8 @@ var generatePolkaRankings = function(polkaStandings) {
     table.append(row.compose({
         'id': ++i,
         'name': i == 1 ? polkaJerseyImg + rider.rider : rider.rider,
-        'elevation': metersToFeet(rider.elevation).toLocaleString() + ' ft'
+        'elevation': metersToFeet(rider.elevation).toLocaleString() + ' ft',
+        'time': minClimbs != rider.polka_climbs ? 0 : rider.time
     }));
   }
 }
@@ -143,7 +156,7 @@ var generateYellowMaillotRankings = function(gcStandings) {
       '<td><img src="{{picture}}" class="avatar"/></td>'+
       '<td>{{name}}</td>'+
       '<td>{{distance}}</td>'+
-      '<td>{{points}}</td>'+
+    //   '<td>{{points}}</td>'+
       '<td>{{gap}}</td>'+
   '</tr>';
 
@@ -155,7 +168,8 @@ var generateYellowMaillotRankings = function(gcStandings) {
         'picture': rider.profilePicture,
         'name': i == 1 ? yellowJerseyImg + rider.rider : rider.rider,
         'distance': metersToMiles(rider.distance).toLocaleString() + ' mi',
-        'gap': i == 1 ? '--' : metersToMiles(gap - rider.distance).toLocaleString() + ' mi'
+        'gap': i == 1 ? '--' : metersToMiles(gap - rider.distance).toLocaleString() + ' mi',
+        'points': metersToMiles(rider.points)
     }));
     gap = i == 1 ? rider.distance : gap;
   };
