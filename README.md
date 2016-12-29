@@ -15,7 +15,6 @@ Radius Cycling Leaderboard uses a Year to date ranking system based on the [Stra
 - Include points. If rider w/ radius team miles X 1.2
 - PolkaMaillot should be based on time of several climbs (HH, Four Corners, ... )
 - Random fact/stat generator (fastest rider, who runs?, Max power, etc)
-- Include `/{year}` option to see leaderboard of previous years.
 - Filter segments rankings by year
 
 ### Technical debt:
