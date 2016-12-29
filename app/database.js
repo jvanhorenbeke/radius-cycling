@@ -41,8 +41,8 @@ function loadCurrentCyclingActivities(callback) {
 }
 
 function loadCyclingActivities(year, callback) {
-    var startEpoch = moment.utc(year, "YYYY").unix();
-    var endEpoch = moment.utc(year+1, "YYYY").unix();
+    var startEpoch = moment.utc(Number(year), "YYYY").unix();
+    var endEpoch = moment.utc(Number(year)+1, "YYYY").unix();
     var sqlQuery = 'SELECT json FROM activities WHERE startDate >= '
     + startEpoch + ' AND startDate < ' + endEpoch;
     db.all(sqlQuery, function(err, rows) {

@@ -74,7 +74,18 @@ server.route({
     method: 'GET',
     path: '/general',
     handler: function (request, reply) {
-        rankings.retrieveGeneralLeaderboard(function(data) {
+        rankings.retrieveCurrentGeneralLeaderboard(function(data) {
+            reply(data);
+        });
+    }
+});
+
+server.route({
+    method: 'GET',
+    path: '/general/{year}',
+    handler: function (request, reply) {
+        var year = encodeURIComponent(request.params.year);
+        rankings.retrieveGeneralLeaderboard(year, function(data) {
             reply(data);
         });
     }

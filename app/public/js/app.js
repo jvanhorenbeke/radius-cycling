@@ -34,7 +34,14 @@ var loadSprinterLeaderBoard = function() {
 
 // --------------- Club Activities ---------------
 var loadClubRankings = function() {
-    $.ajax({url: serverUrl + "/general"})
+
+    var params = "";
+    var year = getUrlVar('year');
+    if (year != "") {
+        params = "/" + year;
+    }
+
+    $.ajax({url: serverUrl + "/general" + params})
      .done(function (data) {
           //now that all our data is loaded we print the values;
           generateYellowMaillotRankings(data);
@@ -58,6 +65,11 @@ var metersToFeet = function(meters) {
 var speedToMiles = function(metersPerSeconds) {
     metersPerHour = metersPerSeconds * 3600;
     return metersToMiles(metersPerHour);
+}
+
+var getUrlVar = function(key) {
+	var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search);
+	return result && unescape(result[1]) || "";
 }
 // ------------------ Bind data to HTML elements ---------------------
 var generateGreenMaillotRankings = function(data) {

@@ -9,10 +9,6 @@ var athletesMap = new Map();
 
 /******************************************************************************/
 var updateStats = function(id, distance, elevation, points, time, startDate) {
-    var activityYear = moment(startDate, "YYYY-MM-DDTHH:mm:ssZ").year();
-    if (activityYear != moment().year()) {
-        return;
-    }
     var athlete = athletesMap.get(id);
     athlete.distance += distance;
     athlete.elevation += elevation;
@@ -82,7 +78,7 @@ var retrieveGeneralLeaderboard = function(year, callback) {
             return;
         }
 
-        loadFixedValues();
+        if (year == 2016 || year == -1) loadFixedValues();
         var gcStandings = [...athletesMap.values()];
         gcStandings.sort(function (a, b) {
             var dPoints = b.points - a.points;
@@ -150,6 +146,6 @@ var loadFixedValues = function() {
 module.exports = {
     retrieveRadiusLeaderboard: function(cb){strava.retrieveSegment(stravaIds.HAWK_HILL_SEGMENT_ID, cb)},
     retrieveSprinterLeaderboard: function(cb){strava.retrieveSegment(stravaIds.POLO_FIELD_SEGMENT_ID, cb)},
-    retrieveGeneralLeaderboard: function(cb){retrieveGeneralLeaderboard(-1, cb)},
-    retrieveGeneralPrevLeaderboard: function(cb){retrievePrevGeneralLeaderboard(year, cb)}
+    retrieveCurrentGeneralLeaderboard: function(cb){retrieveGeneralLeaderboard(-1, cb)},
+    retrieveGeneralLeaderboard: function(year, cb){retrieveGeneralLeaderboard(year, cb)}
 };
