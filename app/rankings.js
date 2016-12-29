@@ -41,9 +41,9 @@ var retrieveClubMembers = function(callback) {
     });
 };
 
-var loadClubAcitivities = function(callback) {
-    database.init();
-    database.loadCyclingActivitiesCurrent(function(rows) {
+var loadClubAcitivities = function(year, callback) {
+
+    var processActivities = function(rows) {
         database.close();
         rows.forEach(function(activity) {
             if (activity.type == 'Ride' && activity.commute == false) {
@@ -53,17 +53,24 @@ var loadClubAcitivities = function(callback) {
             }
         });
         callback();
-    });
+    };
+
+    database.init();
+    if (year == null || year == -1) {
+        database.loadCurrentCyclingActivities(processActivities);
+    } else {
+        database.loadCyclingActivities(year, processActivities);
+    }
 };
 
-var retrieveGeneralLeaderboard = function(callback) {
+var retrieveGeneralLeaderboard = function(year, callback) {
     athletesMap = new Map();
     series([
         function(callback) {
             retrieveClubMembers(callback);
         },
         function(callback) {
-            loadClubAcitivities(callback);
+            loadClubAcitivities(year, callback);
         }
         // ,
         // function(callback) {
@@ -143,5 +150,6 @@ var loadFixedValues = function() {
 module.exports = {
     retrieveRadiusLeaderboard: function(cb){strava.retrieveSegment(stravaIds.HAWK_HILL_SEGMENT_ID, cb)},
     retrieveSprinterLeaderboard: function(cb){strava.retrieveSegment(stravaIds.POLO_FIELD_SEGMENT_ID, cb)},
-    retrieveGeneralLeaderboard: function(cb){retrieveGeneralLeaderboard(cb)}
+    retrieveGeneralLeaderboard: function(cb){retrieveGeneralLeaderboard(-1, cb)},
+    retrieveGeneralPrevLeaderboard: function(cb){retrievePrevGeneralLeaderboard(year, cb)}
 };

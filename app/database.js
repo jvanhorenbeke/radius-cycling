@@ -36,7 +36,7 @@ function readAllRows(callback) {
     });
 }
 
-function loadCyclingActivitiesCurrent(callback) {
+function loadCurrentCyclingActivities(callback) {
     loadCyclingActivities(moment().utc().year(), callback);
 }
 
@@ -61,7 +61,7 @@ function closeDb() {
 module.exports = {
   init: function(){createDb()},
   addActivity: function(startDate, activityId, athleteId, type, json){insertRows(startDate, activityId, athleteId, type, json)},
-  loadCyclingActivitiesCurrent: function(callback){loadCyclingActivitiesCurrent(callback)},
+  loadCurrentCyclingActivities: function(callback){loadCurrentCyclingActivities(callback)},
   loadCyclingActivities: function(year, callback){loadCyclingActivities(year, callback)},
   close: function(){closeDb()}
 };
