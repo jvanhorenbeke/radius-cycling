@@ -19,14 +19,14 @@ function createDb() {
 function createTable() {
     if(!exists) {
         console.log("createTable Activities");
-        db.run("CREATE TABLE activities(startDate INTEGER NOT NULL, stravaActivityId INTEGER UNIQUE, stravaAthleteId INTEGER, type TEXT, json TEXT NOT NULL)");
+        db.run("CREATE TABLE activities(startDate INTEGER NOT NULL, stravaActivityId INTEGER UNIQUE, stravaAthleteId INTEGER, type TEXT, json TEXT NOT NULL, clubId INTEGER)");
     }
 }
 
-function insertRows(startDate, activityId, athleteId, type, json) {
+function insertRows(startDate, activityId, clubId, athleteId, type, json) {
     //Adding the IGNORE action because we might process already stored activities
-    var stmt = db.prepare("INSERT OR IGNORE INTO activities VALUES (?,?,?,?,?)");
-    stmt.run(startDate, activityId, athleteId, type, json);
+    var stmt = db.prepare("INSERT OR IGNORE INTO activities VALUES (?,?,?,?,?,?)");
+    stmt.run(startDate, activityId, athleteId, type, json, clubId);
     stmt.finalize();
 }
 
@@ -60,7 +60,7 @@ function closeDb() {
 
 module.exports = {
   init: function(){createDb()},
-  addActivity: function(startDate, activityId, athleteId, type, json){insertRows(startDate, activityId, athleteId, type, json)},
+  addActivity: function(startDate, activityId, clubId, athleteId, type, json){insertRows(startDate, activityId, clubId, athleteId, type, json)},
   loadCurrentCyclingActivities: function(callback){loadCurrentCyclingActivities(callback)},
   loadCyclingActivities: function(year, callback){loadCyclingActivities(year, callback)},
   close: function(){closeDb()}

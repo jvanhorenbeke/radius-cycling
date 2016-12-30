@@ -3,7 +3,6 @@
 const moment = require('moment');
 const bearerToken = process.env.STRAVA_KEY;
 const database = require('./database');
-const stravaIds = require('./stravaIds');
 const axios = require('axios');
 axios.defaults.baseURL = 'https://www.strava.com/api/v3';
 axios.defaults.headers.common['Authorization'] = bearerToken;
@@ -60,8 +59,9 @@ var processActivities = function(json) {
 
 var storeActivity = function(activity) {
     var startDate = moment.utc(activity.start_date, "YYYY-MM-DDThh:mm:ssZ");
-    database.addActivity(startDate.unix(), activity.id, activity.athlete.id,
-                         activity.type, JSON.stringify(activity));
+    database.addActivity(startDate.unix(), activity.id, clubId,
+                         activity.athlete.id, activity.type,
+                         JSON.stringify(activity));
 };
 
 /******************************************************************************/
