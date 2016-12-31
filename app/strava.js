@@ -79,6 +79,18 @@ var cacheData = function() {
         },
         function(callback) {
             cacheLeaderboard(stravaIds.FOUR_CORNERS_SEGMENT_ID, false, '', callback);
+        },
+        function(callback) {
+            cacheLeaderboard(stravaIds.PANTOLL_SEGMENT_ID, true, year, callback);
+        },
+        function(callback) {
+            cacheLeaderboard(stravaIds.PANTOLL_SEGMENT_ID, false, '', callback);
+        },
+        function(callback) {
+            cacheLeaderboard(stravaIds.CAMINO_ALTO_SEGMENT_ID, true, year, callback);
+        },
+        function(callback) {
+            cacheLeaderboard(stravaIds.CAMINO_ALTO_SEGMENT_ID, false, '', callback);
         }
     ], function (err, results) {
         if (err !== undefined) {
