@@ -20,6 +20,8 @@ function createTable() {
     if(!exists) {
         console.log("createTable Activities");
         db.run("CREATE TABLE activities(startDate INTEGER NOT NULL, stravaActivityId INTEGER UNIQUE, stravaAthleteId INTEGER, type TEXT, json TEXT NOT NULL, clubId INTEGER)");
+        db.run("CREATE TABLE leaderboards(segmentId INTEGER NOT NULL, year INTEGER, json TEXT NOT NULL)");
+        db.run("CREATE TABLE members(year INTEGER, json TEXT NOT NULL)");
     }
 }
 
