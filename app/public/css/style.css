@@ -130,3 +130,7 @@ h2 small {
     color: white;
     z-index: 10;
 }
+
+.rules a, .rules a:hover, .rules a:visited {
+    color: white;
+}
