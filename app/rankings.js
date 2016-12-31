@@ -39,7 +39,6 @@ var retrieveClubMembers = function(year, callback) {
                 });
             }
         });
-        console.log('done retrieving club members');
         callback();
     });
 };
@@ -65,11 +64,19 @@ var retrieveGeneralLeaderboard = function(year, callback) {
         },
         function(callback) {
             loadClubAcitivities(year, callback);
+        },
+        function(callback) {
+            retrievePolkaTimes(stravaIds.HAWK_HILL_SEGMENT_ID, year, callback);
+        },
+        function(callback) {
+            retrievePolkaTimes(stravaIds.CAMINO_ALTO_SEGMENT_ID, year, callback);
+        },
+        function(callback) {
+            retrievePolkaTimes(stravaIds.PANTOLL_SEGMENT_ID, year, callback);
+        },
+        function(callback) {
+            retrievePolkaTimes(stravaIds.FOUR_CORNERS_SEGMENT_ID, year, callback);
         }
-        // ,
-        // function(callback) {
-        //     retrievePolkaTimes(callback);
-        // }
     ], function (err, results) {
         if (err !== undefined) {
             console.log('Something went wrong: ' + err);
@@ -92,23 +99,13 @@ var retrieveGeneralLeaderboard = function(year, callback) {
     });
 }
 
-var retrievePolkaTimes = function(callback) {
-    var handleSegmentResults = function(data) {
-        data.entries.forEach(function(athlete){
-            updateStats(athlete.athlete_id, 0, 0, 0, athlete.elapsed_time, athlete.start_date);
-        });
-    }
-
-    var handleSegmentResultsWcb = function(data) {
-        data.entries.forEach(function(athlete){
+var retrievePolkaTimes = function(segmentId, year, callback) {
+    loadSegmentLeaderboard(segmentId, year, function handleSegmentResults(data) {
+        data.entries.forEach(function(athlete) {
             updateStats(athlete.athlete_id, 0, 0, 0, athlete.elapsed_time, athlete.start_date);
         });
         callback();
-    }
-    strava.retrieveSegment(stravaIds.HAWK_HILL_SEGMENT_ID, handleSegmentResults);
-    strava.retrieveSegment(stravaIds.CAMINO_ALTO_SEGMENT_ID, handleSegmentResults);
-    strava.retrieveSegment(stravaIds.PANTOLL_SEGMENT_ID, handleSegmentResults);
-    strava.retrieveSegment(stravaIds.FOUR_CORNERS_SEGMENT_ID, handleSegmentResultsWcb);
+    });
 }
 /*******************************************************************************
  Cache Strava Activities and Members:

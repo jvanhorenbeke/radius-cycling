@@ -122,39 +122,41 @@ var generatePolkaRankings = function(polkaStandings) {
       '<th scope="row">{{id}}</th>'+
       '<td>{{name}}</td>'+
       '<td>{{elevation}}</td>'+
-    //   '<td>{{time}}</td>'+
+      '<td>{{time}}</td>'+
   '</tr>';
 
-  var minClimbs = 2;
+  var minClimbs = 4;
   polkaStandings.sort(function (a, b) {
-    // if (a.polka_climbs < minClimbs) {
-    //     if (b.polka_climbs < minClimbs) {
-    //         var dElev = b.elevation - a.elevation;
-    //         if(dElev) return dElev;
-    //     }
-    //     return 1;
-    // }
-    //
-    // if (b.polka_climbs < minClimbs) {
-    //     return -1;
-    // }
+    if (a.polka_climbs < minClimbs) {
+        if (b.polka_climbs < minClimbs) {
+            var dElev = b.elevation - a.elevation;
+            if(dElev) return dElev;
+        }
+        return 1;
+    }
+
+    if (b.polka_climbs < minClimbs) {
+        return -1;
+    }
 
     // Sort by time
-    // var dTime = a.time - b.time;
-    // if(dTime) return dTime;
+    var dTime = a.time - b.time;
+    if(dTime) return dTime;
 
     var dElevation = b.elevation - a.elevation;
     if(dElevation) return dElevation;
+
     return 0;
   });
 
   var i = 0;
   for (var rider of polkaStandings) {
+    var time =  minClimbs > rider.polka_climbs ? 0 : rider.time;
     table.append(row.compose({
         'id': ++i,
         'name': i == 1 ? polkaJerseyImg + rider.rider : rider.rider,
         'elevation': metersToFeet(rider.elevation).toLocaleString() + ' ft',
-        'time': minClimbs != rider.polka_climbs ? 0 : rider.time
+        'time': moment.utc(time*1000).format('mm:ss'),
     }));
   }
 }

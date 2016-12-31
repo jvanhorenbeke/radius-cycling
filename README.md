@@ -12,7 +12,6 @@ Radius Cycling Leaderboard uses a Year to date ranking system based on the [Stra
 1. run `npm start`
 
 ### TO DO list features:
-- PolkaMaillot should be based on time of several climbs (HH, Four Corners, ... )
 - Random fact/stat generator (fastest rider, who runs?, Max power, etc)
 
 ### Technical debt:
