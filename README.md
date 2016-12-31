@@ -19,7 +19,6 @@ Radius Cycling Leaderboard uses a Year to date ranking system based on the [Stra
 - Clean up jQuery bindings, use better framework
 - Import old activities in DB, hardcoded delta.
 - Links CSS in rules HTML.
-- Use stored leaderboards, no Strava's
 
 ### How does it look?:
 ![alt tag](https://gitlab.com/jvanhorenbeke/radius-cycling/raw/master/screenshot.png)
