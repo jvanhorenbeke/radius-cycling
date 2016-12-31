@@ -8,6 +8,7 @@ const stravaIds = require('./stravaIds');
 const axios = require('axios');
 axios.defaults.baseURL = 'https://www.strava.com/api/v3';
 axios.defaults.headers.common['Authorization'] = bearerToken;
+database.init();
 
 // Strava Specific
 const clubId = '197635';
@@ -53,7 +54,6 @@ var retrieveRelatedActivity = function(activityId, callback) {
 var athletesSet = new Set();
 var cacheData = function() {
     var year = moment().utc().year();
-    database.init();
     series([
         function(callback) {
             cacheClubMembers(callback);
@@ -97,7 +97,6 @@ var cacheData = function() {
             console.log('Something went wrong: ' + err);
             return;
         }
-        database.close();
         console.log('[Strava] Done updating database/cache');
     });
 }

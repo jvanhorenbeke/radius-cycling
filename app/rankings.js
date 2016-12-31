@@ -6,6 +6,7 @@ const database = require('./database');
 const strava = require('./strava');
 const stravaIds = require('./stravaIds');
 var athletesMap = new Map();
+database.init();
 
 /******************************************************************************/
 var updateStats = function(id, distance, elevation, points, time, startDate) {
@@ -17,8 +18,12 @@ var updateStats = function(id, distance, elevation, points, time, startDate) {
     athlete.polka_climbs += time === 0 ? 0 : 1;
 }
 
-var retrieveClubMembers = function(callback) {
-    strava.retrieveClubMembers(function(data) {
+var loadSegmentLeaderboard = function(segmentId, year, callback) {
+    database.loadSegmentLeaderboard(segmentId, year, callback);
+}
+
+var retrieveClubMembers = function(year, callback) {
+    database.loadMembers(year, function(data) {
         data.forEach(function(member, i) {
             if (!athletesMap.has(member.id)) {
                 athletesMap.set(member.id, {
@@ -38,9 +43,7 @@ var retrieveClubMembers = function(callback) {
 };
 
 var loadClubAcitivities = function(year, callback) {
-
-    var processActivities = function(rows) {
-        database.close();
+    database.loadCyclingActivities(year, function processActivities(rows) {
         rows.forEach(function(activity) {
             if (activity.type == 'Ride' && activity.commute == false) {
                 updateStats(activity.athlete.id, activity.distance,
@@ -49,21 +52,14 @@ var loadClubAcitivities = function(year, callback) {
             }
         });
         callback();
-    };
-
-    database.init();
-    if (year == null || year == -1) {
-        database.loadCurrentCyclingActivities(processActivities);
-    } else {
-        database.loadCyclingActivities(year, processActivities);
-    }
+    });
 };
 
 var retrieveGeneralLeaderboard = function(year, callback) {
     athletesMap = new Map();
     series([
         function(callback) {
-            retrieveClubMembers(callback);
+            retrieveClubMembers(year, callback);
         },
         function(callback) {
             loadClubAcitivities(year, callback);
@@ -78,7 +74,7 @@ var retrieveGeneralLeaderboard = function(year, callback) {
             return;
         }
 
-        if (year == 2016 || year == -1) loadFixedValues();
+        if (year == 2016) loadFixedValues();
         var gcStandings = [...athletesMap.values()];
         gcStandings.sort(function (a, b) {
             var dPoints = b.points - a.points;
@@ -144,8 +140,8 @@ var loadFixedValues = function() {
 
 /******************************************************************************/
 module.exports = {
-    retrieveRadiusLeaderboard: function(cb){strava.retrieveSegment(stravaIds.HAWK_HILL_SEGMENT_ID, cb)},
-    retrieveSprinterLeaderboard: function(cb){strava.retrieveSegment(stravaIds.POLO_FIELD_SEGMENT_ID, cb)},
-    retrieveCurrentGeneralLeaderboard: function(cb){retrieveGeneralLeaderboard(-1, cb)},
+    retrieveRadiusLeaderboard: function(year, cb){loadSegmentLeaderboard(stravaIds.HAWK_HILL_SEGMENT_ID, year, cb)},
+    retrieveSprinterLeaderboard: function(year, cb){loadSegmentLeaderboard(stravaIds.POLO_FIELD_SEGMENT_ID, year, cb)},
+    retrieveCurrentGeneralLeaderboard: function(cb){retrieveGeneralLeaderboard(moment().utc().year(), cb)},
     retrieveGeneralLeaderboard: function(year, cb){retrieveGeneralLeaderboard(year, cb)}
 };

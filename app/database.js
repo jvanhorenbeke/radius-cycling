@@ -41,10 +41,6 @@ function readAllRows(table, callback) {
     });
 }
 
-function loadCurrentCyclingActivities(callback) {
-    loadCyclingActivities(moment().utc().year(), callback);
-}
-
 function loadCyclingActivities(year, callback) {
     var startEpoch = moment.utc(Number(year), "YYYY").unix();
     var endEpoch = moment.utc(Number(year)+1, "YYYY").unix();
@@ -61,6 +57,20 @@ function loadCyclingActivities(year, callback) {
     });
 }
 
+function loadMembers(year, callback) {
+    var sqlQuery = 'SELECT json FROM members WHERE year = ' + year;
+    db.all(sqlQuery, function(err, rows) {
+        callback(JSON.parse(rows[0].json));
+    });
+}
+
+function loadSegmentLeaderboard(segmentId, year, callback) {
+    var sqlQuery = 'SELECT json FROM leaderboards WHERE segmentId=' + segmentId + ' AND year=' + year;
+    db.all(sqlQuery, function(err, rows) {
+        callback(JSON.parse(rows[0].json));
+    });
+}
+
 function closeDb() {
     db.close();
 }
@@ -70,7 +80,8 @@ module.exports = {
   addActivity: function(startDate, activityId, clubId, athleteId, type, shared, json, relatedActivities){insertRows(startDate, activityId, clubId, athleteId, type, shared, json, relatedActivities)},
   addLeaderboard: function(segmentId, year, json){insertLeaderboard(segmentId, year, json)},
   addMembers: function(year, json){insertMembers(year, json)},
-  loadCurrentCyclingActivities: function(callback){loadCurrentCyclingActivities(callback)},
   loadCyclingActivities: function(year, callback){loadCyclingActivities(year, callback)},
+  loadMembers: function(year, callback){loadMembers(year, callback)},
+  loadSegmentLeaderboard: function(segmentId, year, callback){loadSegmentLeaderboard(segmentId, year, callback)},
   close: function(){closeDb()}
 };

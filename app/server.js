@@ -1,6 +1,7 @@
 'use strict';
 
 const Hapi = require('hapi');
+const moment = require('moment');
 const database = require('./database');
 const strava = require('./strava');
 const rankings = require('./rankings');
@@ -30,21 +31,10 @@ server.route({
 
 server.route({
     method: 'GET',
-    path: '/activities',
+    path: '/radius/{year?}',
     handler: function (request, reply) {
-        database.init();
-        database.loadCyclingActivitiesCurrent(function(rows) {
-            database.close();
-            reply(rows);
-        });
-    }
-});
-
-server.route({
-    method: 'GET',
-    path: '/members',
-    handler: function (request, reply) {
-        strava.retrieveClubMembers(function(data) {
+        var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
+        rankings.retrieveRadiusLeaderboard(year, function(data) {
             reply(data);
         });
     }
@@ -52,9 +42,10 @@ server.route({
 
 server.route({
     method: 'GET',
-    path: '/radius',
+    path: '/sprinters/{year?}',
     handler: function (request, reply) {
-        rankings.retrieveRadiusLeaderboard(function(data) {
+        var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
+        rankings.retrieveSprinterLeaderboard(year, function(data) {
             reply(data);
         });
     }
@@ -62,29 +53,9 @@ server.route({
 
 server.route({
     method: 'GET',
-    path: '/sprinters',
+    path: '/general/{year?}',
     handler: function (request, reply) {
-        rankings.retrieveSprinterLeaderboard(function(data) {
-            reply(data);
-        });
-    }
-});
-
-server.route({
-    method: 'GET',
-    path: '/general',
-    handler: function (request, reply) {
-        rankings.retrieveCurrentGeneralLeaderboard(function(data) {
-            reply(data);
-        });
-    }
-});
-
-server.route({
-    method: 'GET',
-    path: '/general/{year}',
-    handler: function (request, reply) {
-        var year = encodeURIComponent(request.params.year);
+        var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
         rankings.retrieveGeneralLeaderboard(year, function(data) {
             reply(data);
         });

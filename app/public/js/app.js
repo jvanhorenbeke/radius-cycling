@@ -11,8 +11,8 @@ String.prototype.compose = (function (){
 }());
 
 //--------------- Hawk Hill Leaderboard ---------------
-var loadRadiusLeaderBoard = function() {
-  $.ajax({url: serverUrl + "/radius"})
+var loadRadiusLeaderBoard = function(params) {
+  $.ajax({url: serverUrl + "/radius" + params})
    .done(function (data) {
      generateRadiusRankings(data);
    })
@@ -22,8 +22,8 @@ var loadRadiusLeaderBoard = function() {
 };
 
 //--------------- Polo Field Leaderboard ---------------
-var loadSprinterLeaderBoard = function() {
-  $.ajax({url: serverUrl + "/sprinters"})
+var loadSprinterLeaderBoard = function(params) {
+  $.ajax({url: serverUrl + "/sprinters" + params})
    .done(function (data) {
      generateGreenMaillotRankings(data);
    })
@@ -46,8 +46,8 @@ var loadClubRankings = function() {
           //now that all our data is loaded we print the values;
           generateYellowMaillotRankings(data);
           generatePolkaRankings(data);
-          loadSprinterLeaderBoard();
-          loadRadiusLeaderBoard();
+          loadSprinterLeaderBoard(params);
+          loadRadiusLeaderBoard(params);
      })
      .fail(function (jqXHR, textStatus) {
         console.log('unable to retrieve GC ranking');
