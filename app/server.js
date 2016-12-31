@@ -14,7 +14,7 @@ server.connection({ port: herokuPort });
 var milisInMinutes = 60*1000;
 setInterval(function() {
     console.log('Cache Latest Strava Activities For Club');
-    strava.cacheLatestActivities();
+    strava.cacheData();
 }, 120*milisInMinutes);
 
 // ----------------------------- ROUTES -----------------------------
@@ -22,8 +22,8 @@ server.route({
     method: 'GET',
     path: '/update-cache',
     handler: function (request, reply) {
-        console.log('Triggered... Updating Cache with latest Strava activities for Club');
-        strava.cacheLatestActivities();
+        console.log('Triggered... Updating Cache with latest Strava data for Club');
+        strava.cacheData();
         reply('Updating cache');
     }
 });

@@ -4,25 +4,16 @@ const moment = require('moment');
 const sqlite3 = require('sqlite3').verbose();
 const fs = require("fs");
 const file = "data.db";
-var exists = fs.existsSync(file);
 var db;
 
 function createDb() {
-    if(!exists) {
-      console.log("Creating DB file.");
-      fs.openSync(file, "w");
-    }
-
-    db = new sqlite3.Database(file, createTable);
+    db = new sqlite3.Database(file);
 }
 
-function createTable() {
-    if(!exists) {
-        console.log("createTable Activities");
-        db.run("CREATE TABLE activities(startDate INTEGER NOT NULL, stravaActivityId INTEGER UNIQUE, stravaAthleteId INTEGER, type TEXT, json TEXT NOT NULL, clubId INTEGER)");
-        db.run("CREATE TABLE leaderboards(segmentId INTEGER NOT NULL, year INTEGER, json TEXT NOT NULL)");
-        db.run("CREATE TABLE members(year INTEGER, json TEXT NOT NULL)");
-    }
+function createTables() {
+    db.run("CREATE TABLE activities(startDate INTEGER NOT NULL, stravaActivityId INTEGER UNIQUE, stravaAthleteId INTEGER, type TEXT, json TEXT NOT NULL, clubId INTEGER)");
+    db.run("CREATE TABLE leaderboards(segmentId INTEGER NOT NULL, year INTEGER, json TEXT NOT NULL)");
+    db.run("CREATE TABLE members(year INTEGER, json TEXT NOT NULL)");
 }
 
 function insertRows(startDate, activityId, clubId, athleteId, type, json) {
@@ -32,8 +23,20 @@ function insertRows(startDate, activityId, clubId, athleteId, type, json) {
     stmt.finalize();
 }
 
-function readAllRows(callback) {
-    db.all("SELECT rowid AS id, * FROM activities", function(err, rows) {
+function insertMembers(year, json) {
+    var stmt = db.prepare("INSERT OR IGNORE INTO members VALUES (?,?)");
+    stmt.run(year, json);
+    stmt.finalize();
+}
+
+function insertLeaderboard(segmentId, year, json) {
+    var stmt = db.prepare("INSERT OR IGNORE INTO leaderboards VALUES (?,?,?)");
+    stmt.run(segmentId, year, json);
+    stmt.finalize();
+}
+
+function readAllRows(table, callback) {
+    db.all("SELECT rowid AS id, * FROM "+table, function(err, rows) {
         callback(rows);
     });
 }
@@ -63,6 +66,8 @@ function closeDb() {
 module.exports = {
   init: function(){createDb()},
   addActivity: function(startDate, activityId, clubId, athleteId, type, json){insertRows(startDate, activityId, clubId, athleteId, type, json)},
+  addLeaderboard: function(segmentId, year, json){insertLeaderboard(segmentId, year, json)},
+  addMembers: function(year, json){insertMembers(year, json)},
   loadCurrentCyclingActivities: function(callback){loadCurrentCyclingActivities(callback)},
   loadCyclingActivities: function(year, callback){loadCyclingActivities(year, callback)},
   close: function(){closeDb()}
