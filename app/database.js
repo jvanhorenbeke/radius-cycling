@@ -16,21 +16,21 @@ function createTables() {
     db.run("CREATE TABLE members(year INTEGER, json TEXT NOT NULL)");
 }
 
-function insertRows(startDate, activityId, clubId, athleteId, type, json) {
+function insertRows(startDate, activityId, clubId, athleteId, type, shared, json, relatedActivities) {
     //Adding the IGNORE action because we might process already stored activities
-    var stmt = db.prepare("INSERT OR IGNORE INTO activities VALUES (?,?,?,?,?,?)");
-    stmt.run(startDate, activityId, athleteId, type, json, clubId);
+    var stmt = db.prepare("INSERT OR REPLACE INTO activities VALUES (?,?,?,?,?,?,?,?)");
+    stmt.run(startDate, activityId, athleteId, type, json, clubId, shared, relatedActivities);
     stmt.finalize();
 }
 
 function insertMembers(year, json) {
-    var stmt = db.prepare("INSERT OR IGNORE INTO members VALUES (?,?)");
+    var stmt = db.prepare("INSERT OR REPLACE INTO members VALUES (?,?)");
     stmt.run(year, json);
     stmt.finalize();
 }
 
 function insertLeaderboard(segmentId, year, json) {
-    var stmt = db.prepare("INSERT OR IGNORE INTO leaderboards VALUES (?,?,?)");
+    var stmt = db.prepare("INSERT OR REPLACE INTO leaderboards VALUES (?,?,?)");
     stmt.run(segmentId, year, json);
     stmt.finalize();
 }
@@ -48,12 +48,14 @@ function loadCurrentCyclingActivities(callback) {
 function loadCyclingActivities(year, callback) {
     var startEpoch = moment.utc(Number(year), "YYYY").unix();
     var endEpoch = moment.utc(Number(year)+1, "YYYY").unix();
-    var sqlQuery = 'SELECT json FROM activities WHERE startDate >= '
+    var sqlQuery = 'SELECT shared, json FROM activities WHERE startDate >= '
     + startEpoch + ' AND startDate < ' + endEpoch;
     db.all(sqlQuery, function(err, rows) {
         var modifiedRows = [];
         rows.forEach(function (row) {
-            modifiedRows.push(JSON.parse(row.json));
+            var json = JSON.parse(row.json);
+            json.points = row.shared == 1 ? json.distance * 1.2 : json.distance;
+            modifiedRows.push(json);
         });
         callback(modifiedRows);
     });
@@ -65,7 +67,7 @@ function closeDb() {
 
 module.exports = {
   init: function(){createDb()},
-  addActivity: function(startDate, activityId, clubId, athleteId, type, json){insertRows(startDate, activityId, clubId, athleteId, type, json)},
+  addActivity: function(startDate, activityId, clubId, athleteId, type, shared, json, relatedActivities){insertRows(startDate, activityId, clubId, athleteId, type, shared, json, relatedActivities)},
   addLeaderboard: function(segmentId, year, json){insertLeaderboard(segmentId, year, json)},
   addMembers: function(year, json){insertMembers(year, json)},
   loadCurrentCyclingActivities: function(callback){loadCurrentCyclingActivities(callback)},

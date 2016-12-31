@@ -44,7 +44,7 @@ var loadClubAcitivities = function(year, callback) {
         rows.forEach(function(activity) {
             if (activity.type == 'Ride' && activity.commute == false) {
                 updateStats(activity.athlete.id, activity.distance,
-                    activity.total_elevation_gain, activity.distance,
+                    activity.total_elevation_gain, activity.points,
                     0, activity.start_date);
             }
         });

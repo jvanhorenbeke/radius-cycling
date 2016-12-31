@@ -168,7 +168,7 @@ var generateYellowMaillotRankings = function(gcStandings) {
       '<td><img src="{{picture}}" class="avatar"/></td>'+
       '<td>{{name}}</td>'+
       '<td>{{distance}}</td>'+
-    //   '<td>{{points}}</td>'+
+      '<td>{{points}}</td>'+
       '<td>{{gap}}</td>'+
   '</tr>';
 
