@@ -60,14 +60,22 @@ function loadCyclingActivities(year, callback) {
 function loadMembers(year, callback) {
     var sqlQuery = 'SELECT json FROM members WHERE year = ' + year;
     db.all(sqlQuery, function(err, rows) {
-        callback(JSON.parse(rows[0].json));
+        if (rows.length>0) {
+            callback(JSON.parse(rows[0].json));
+        } else {
+            callback(JSON.parse('[]'));
+        }
     });
 }
 
 function loadSegmentLeaderboard(segmentId, year, callback) {
     var sqlQuery = 'SELECT json FROM leaderboards WHERE segmentId=' + segmentId + ' AND year=' + year;
     db.all(sqlQuery, function(err, rows) {
-        callback(JSON.parse(rows[0].json));
+        if (rows.length>0) {
+            callback(JSON.parse(rows[0].json));
+        } else {
+            callback(JSON.parse('[]'));
+        }
     });
 }
 

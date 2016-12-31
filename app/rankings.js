@@ -10,6 +10,8 @@ database.init();
 
 /******************************************************************************/
 var updateStats = function(id, distance, elevation, points, time, startDate) {
+    if (!athletesMap.has(id)){return;}
+
     var athlete = athletesMap.get(id);
     athlete.distance += distance;
     athlete.elevation += elevation;
