@@ -54,7 +54,7 @@ function loadCyclingActivities(year, callback) {
         var modifiedRows = [];
         rows.forEach(function (row) {
             var json = JSON.parse(row.json);
-            json.points = row.shared == 1 ? json.distance * 1.2 : json.distance;
+            json.points = row.shared == 1 ? json.distance * 1.5 : json.distance;
             modifiedRows.push(json);
         });
         callback(modifiedRows);
