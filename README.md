@@ -12,18 +12,14 @@ Radius Cycling Leaderboard uses a Year to date ranking system based on the [Stra
 1. run `npm start`
 
 ### TO DO list features:
-- Include points. If rider w/ radius team miles X 1.2
 - PolkaMaillot should be based on time of several climbs (HH, Four Corners, ... )
 - Random fact/stat generator (fastest rider, who runs?, Max power, etc)
-- Filter segments rankings by year
 
 ### Technical debt:
-- Improve logging
 - Clean up jQuery bindings, use better framework
-- Store team members as well
 - Import old activities in DB, hardcoded delta.
 - Links CSS in rules HTML.
-- Update ranking every 2 hours and store in db.
+- Use stored leaderboards, no Strava's
 
 ### How does it look?:
 ![alt tag](https://gitlab.com/jvanhorenbeke/radius-cycling/raw/master/screenshot.png)
