@@ -21,9 +21,11 @@ var retrieveClubMembers = function(callback) {
         });
 };
 
-var retrieveSegment = function(segmentId, callback) {
+var retrieveSegment = function(segmentId, onlYtd, callback) {
     console.log('[Strava] retrieving Segment: ' + segmentId);
-    axios.get("/segments/"+segmentId+"/leaderboard?club_id="+clubId+"&per_page=50")
+    var timeFilter = '';
+    if (onlYtd) { timeFilter = "&date_range=this_year"; }
+    axios.get("/segments/"+segmentId+"/leaderboard?club_id="+clubId+"&per_page=50"+timeFilter)
         .then(function (response) {
             callback(response.data);
         })
@@ -68,5 +70,5 @@ var storeActivity = function(activity) {
 module.exports = {
     cacheLatestActivities: function(){cacheLatestActivities()},
     retrieveClubMembers: function(cb){retrieveClubMembers(cb)},
-    retrieveSegment: function(id, cb){retrieveSegment(id, cb)}
+    retrieveSegment: function(id, cb){retrieveSegment(id, true, cb)}
 };
