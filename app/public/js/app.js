@@ -73,22 +73,30 @@ var getUrlVar = function(key) {
 }
 // ------------------ Bind data to HTML elements ---------------------
 var generateGreenMaillotRankings = function(data) {
-  var radiusJerseyImg = '<img src="./res/Jersey_green.svg.png" class="jersey" />';
-  var tbody = $('#greenMaillot').children('tbody');
-  var table = tbody.length ? tbody : $('#greenMaillot');
-  var row = '<tr>'+
+    var radiusJerseyImg = '<img src="./res/Jersey_green.svg.png" class="jersey" />';
+    var tbody = $('#greenMaillot').children('tbody');
+    var table = tbody.length ? tbody : $('#greenMaillot');
+    var row = '<tr>'+
       '<th scope="row">{{id}}</th>'+
       '<td>{{name}}</td>'+
       '<td>{{time}}</td>'+
-  '</tr>';
+    '</tr>';
 
-  $.each(data.entries, function(i, rider) {
-    table.append(row.compose({
-        'id': i+1,
-        'name': i == 0 ? radiusJerseyImg + rider.athlete_name : rider.athlete_name,
-        'time': rider.elapsed_time + ' s'
-    }));
-  });
+    if (data.entries.length < 1) {
+        table.append(row.compose({
+            'id': '--',
+            'name': '<i>No results</i>',
+            'time': '--'
+        }));
+    }
+
+    $.each(data.entries, function(i, rider) {
+        table.append(row.compose({
+            'id': i+1,
+            'name': i == 0 ? radiusJerseyImg + rider.athlete_name : rider.athlete_name,
+            'time': rider.elapsed_time + ' s'
+        }));
+    });
 }
 
 var generateRadiusRankings = function(data) {
@@ -101,6 +109,15 @@ var generateRadiusRankings = function(data) {
       '<td>{{time}}</td>'+
       '<td>{{gap}}</td>'+
   '</tr>';
+
+  if (data.entries.length < 1) {
+      table.append(row.compose({
+          'id': '--',
+          'name': '<i>No results</i>',
+          'time': '--',
+          'gap': '--'
+      }));
+  }
 
   var gap = 0;
   $.each(data.entries, function(i, rider) {
