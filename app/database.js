@@ -17,7 +17,6 @@ function createTables() {
 }
 
 function insertRows(startDate, activityId, clubId, athleteId, type, shared, json, relatedActivities) {
-    //Adding the IGNORE action because we might process already stored activities
     var stmt = db.prepare("INSERT OR REPLACE INTO activities VALUES (?,?,?,?,?,?,?,?)");
     stmt.run(startDate, activityId, athleteId, type, json, clubId, shared, relatedActivities);
     stmt.finalize();

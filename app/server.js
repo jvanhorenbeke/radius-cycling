@@ -11,6 +11,9 @@ const server = new Hapi.Server();
 var herokuPort = process.env.PORT || 3000
 server.connection({ port: herokuPort });
 
+//Update Strava data after startup
+strava.cacheData();
+
 //Every 2hrs we retrieve new activities from Strava and store it in our database
 var milisInMinutes = 60*1000;
 setInterval(function() {
