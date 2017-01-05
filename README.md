@@ -15,7 +15,6 @@ Radius Cycling Leaderboard uses a Year to date ranking system based on the [Stra
 - Random fact/stat generator (fastest rider, who runs?, Max power, etc)
 - Make app configurable.
 - up and down arrows.
-- Send slack notification when someone takes over a jersey.
 - How to reflect running miles? Should there be a triathlon version? What would we measure? Total miles, speed, etc?
 
 ### Technical debt:
