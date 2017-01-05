@@ -144,6 +144,11 @@ var retrieveGeneralLeaderboard = function(year, callback) {
 
 var retrievePolkaTimes = function(segmentId, year, callback) {
     loadSegmentLeaderboard(segmentId, year, function handleSegmentResults(data) {
+        //don't process if undefined or empty
+        if (!data || data.entries.length < 1) {
+            return callback();
+        }
+
         data.entries.forEach(function(athlete) {
             updateStats(athlete.athlete_id, 0, 0, 0, athlete.elapsed_time, athlete.start_date);
         });
