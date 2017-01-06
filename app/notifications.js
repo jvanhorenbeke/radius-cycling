@@ -10,7 +10,7 @@ var sendSlackNotification = function(message) {
         "text": message,
         "username": "Eddy Merckx",
         "channel": "#cycling",
-        "iconUrl":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Eddy-merckx-1350831751.jpg/220px-Eddy-merckx-1350831751.jpg"
+        "iconUrl":"https://radius-cycling.herokuapp.com/res/eddy-merckx.jpg"
     };
 
     webhook.send(payload, function(err, res) {
