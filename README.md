@@ -9,6 +9,7 @@ Radius Cycling Leaderboard uses a Year to date ranking system based on the [Stra
 1. Install [node.js](https://nodejs.org/en/)
 1. Run `npm install` to install all dependencies
 1. Export your Strava Access Token as the env variable `STRAVA_KEY`
+1. Export your Slack webhook URL as `SLACK_WEBHOOK_URL` to receive notifications in your `#cycling` channel
 1. run `npm start`
 
 ### TO DO list features:
@@ -20,6 +21,7 @@ Radius Cycling Leaderboard uses a Year to date ranking system based on the [Stra
 ### Technical debt:
 - Clean up jQuery bindings, use better framework
 - Import old activities in DB, hardcoded delta.
+- Get title and logo from Strava club information
 
 ### How does it look?:
 ![alt tag](https://gitlab.com/jvanhorenbeke/radius-cycling/raw/master/screenshot.png)
