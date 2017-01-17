@@ -11,3 +11,6 @@ gnore all dotfiles...
 app/node_modules/*
 
 npm-debug.log
+
+# local config files
+app/config
