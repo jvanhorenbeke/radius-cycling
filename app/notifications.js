@@ -23,13 +23,8 @@ var sendSlackNotification = function(message) {
 /******************************************************************************/
 module.exports = {
     sendNotification: function(jerseyId, previousRider, newRider) {
-        var message = '';
-        if (previousRider == '') {
-            message = newRider + ' takes the lead for the ' + jerseyId + '! Good job!';
-        } else {
-            message = 'Wow! Looks like ' + newRider + ' takes the lead from ' +
-            previousRider + ' for the ' + jerseyId + '.\n He reminds me of a young me.';
-        }
+        var message = 'Wow! Looks like ' + newRider + ' takes the lead from ' +
+        previousRider + ' for the ' + jerseyId + '.';
         sendSlackNotification(message);
     }
 };

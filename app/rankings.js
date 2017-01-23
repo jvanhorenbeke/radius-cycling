@@ -193,14 +193,14 @@ module.exports = {
     retrieveRadiusLeaderboard: function(year, cb) {
         loadSegmentLeaderboard(stravaIds.HAWK_HILL_SEGMENT_ID, year, function(json) {
             if (isYearCurrent(year))
-                updateLeadersMap('Radius Jersey', json.length > 1 ? json[0].athlete_name : '');
+                updateLeadersMap('Radius Jersey', json.entries.length > 1 ? json.entries[0].athlete_name : '');
             cb(json);
         })
     },
     retrieveSprinterLeaderboard: function(year, cb) {
         loadSegmentLeaderboard(stravaIds.POLO_FIELD_SEGMENT_ID, year, function(json) {
             if (isYearCurrent(year))
-                updateLeadersMap('Green Jersey', json.length > 1 ? json[0].athlete_name : '');
+                updateLeadersMap('Green Jersey', json.entries.length > 1 ? json.entries[0].athlete_name : '');
             cb(json);
         })
     },
