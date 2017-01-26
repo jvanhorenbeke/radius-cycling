@@ -59,7 +59,7 @@ var retrieveClubMembers = function(year, callback) {
 var loadClubAcitivities = function(year, callback) {
     database.loadCyclingActivities(year, function processActivities(rows) {
         rows.forEach(function(activity) {
-            if (activity.type == 'Ride' && activity.commute == false) {
+            if ((activity.type == 'Ride' || activity.type == 'VirtualRide') && activity.commute == false) {
                 updateStats(activity.athlete.id, activity.distance,
                     activity.total_elevation_gain, activity.points,
                     0, activity.start_date);
