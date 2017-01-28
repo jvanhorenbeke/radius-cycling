@@ -85,7 +85,7 @@ var retrieveGeneralLeaderboard = function(year, callback) {
             retrievePolkaTimes(stravaIds.CAMINO_ALTO_SEGMENT_ID, year, callback);
         },
         function(callback) {
-            retrievePolkaTimes(stravaIds.PANTOLL_SEGMENT_ID, year, callback);
+            retrievePolkaTimes(stravaIds.MT_TAM_SEGMENT_ID, year, callback);
         },
         function(callback) {
             retrievePolkaTimes(stravaIds.FOUR_CORNERS_SEGMENT_ID, year, callback);

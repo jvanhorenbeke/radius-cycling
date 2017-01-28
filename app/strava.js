@@ -91,6 +91,12 @@ var cacheData = function() {
         },
         function(callback) {
             cacheLeaderboard(stravaIds.CAMINO_ALTO_SEGMENT_ID, false, '', callback);
+        },
+        function(callback) {
+            cacheLeaderboard(stravaIds.MT_TAM_SEGMENT_ID, true, year, callback);
+        },
+        function(callback) {
+            cacheLeaderboard(stravaIds.MT_TAM_SEGMENT_ID, false, '', callback);
         }
     ], function (err, results) {
         if (err !== undefined) {
@@ -103,7 +109,7 @@ var cacheData = function() {
 
 var cacheLatestActivities = function(callback) {
     console.log('[Strava] Updating activities in database/cache');
-    axios.get("/clubs/"+clubId+"/activities?per_page=100")
+    axios.get("/clubs/"+clubId+"/activities?per_page=150")
         .then(function (response) {
             processActivities(response.data, callback);
         })
