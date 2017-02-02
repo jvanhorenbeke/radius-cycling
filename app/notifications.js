@@ -6,11 +6,14 @@ var url = process.env.SLACK_WEBHOOK_URL || '';
 var webhook = new IncomingWebhook(url);
 
 var sendSlackNotification = function(message) {
+    var random = Math.floor(Math.random() * 4);// 0 -> 4
+    var famousRider = famousRiders[random];
+
     var payload = {
         "text": message,
-        "username": "Eddy Merckx",
+        "username": famousRider[0],
         "channel": "#cycling",
-        "iconUrl":"https://radius-cycling.herokuapp.com/res/eddy-merckx.jpg"
+        "iconUrl":famousRider[1]
     };
 
     webhook.send(payload, function(err, res) {
@@ -19,6 +22,14 @@ var sendSlackNotification = function(message) {
         }
     });
 }
+
+var famousRiders = [
+    ["Eddy Merckx", "https://radius-cycling.herokuapp.com/res/eddy-merckx.jpg"],
+    ["Chris Froome", "https://radius-cycling.herokuapp.com/res/chris-froome.jpg"],
+    ["Miguel Indurain", "https://radius-cycling.herokuapp.com/res/miguel-indurain.jpg"],
+    ["Peter Sagan", "https://radius-cycling.herokuapp.com/res/peter-sagan.jpg"],
+    ["Alberto Contador", "https://radius-cycling.herokuapp.com/res/alberto-contador.jpg"]
+];
 
 /******************************************************************************/
 module.exports = {
