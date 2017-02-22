@@ -28,7 +28,11 @@ var famousRiders = [
     ["Chris Froome", "https://radius-cycling.herokuapp.com/res/chris-froome.jpg"],
     ["Miguel Indurain", "https://radius-cycling.herokuapp.com/res/miguel-indurain.jpg"],
     ["Peter Sagan", "https://radius-cycling.herokuapp.com/res/peter-sagan.jpg"],
-    ["Alberto Contador", "https://radius-cycling.herokuapp.com/res/alberto-contador.jpg"]
+    ["Alberto Contador", "https://radius-cycling.herokuapp.com/res/alberto-contador.jpg"],
+    ["Alejandro Valverde", "https://radius-cycling.herokuapp.com/res/alejandro-valverde.jpg"],
+    ["Fabian Cancellara", "https://radius-cycling.herokuapp.com/res/fabian-cancellara.jpg"],
+    ["Mark Cavendish", "https://radius-cycling.herokuapp.com/res/mark-cavendish.jpg"],
+    ["Tom Boonen", "https://radius-cycling.herokuapp.com/res/tom-boonen.jpg"]
 ];
 
 /******************************************************************************/
