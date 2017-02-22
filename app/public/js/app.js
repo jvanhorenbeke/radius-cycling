@@ -173,7 +173,7 @@ var generatePolkaRankings = function(polkaStandings) {
         'id': ++i,
         'name': i == 1 ? polkaJerseyImg + rider.rider : rider.rider,
         'elevation': metersToFeet(rider.elevation).toLocaleString() + ' ft',
-        'time': moment.utc(time*1000).format('mm:ss'),
+        'time': moment.utc(time*1000).format('HH:mm:ss'),
     }));
   }
 }
