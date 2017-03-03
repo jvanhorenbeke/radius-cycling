@@ -14,6 +14,7 @@ function createTables() {
     db.run("CREATE TABLE activities(startDate INTEGER NOT NULL, stravaActivityId INTEGER UNIQUE, stravaAthleteId INTEGER, type TEXT, json TEXT NOT NULL, clubId INTEGER)");
     db.run("CREATE TABLE leaderboards(segmentId INTEGER NOT NULL, year INTEGER, json TEXT NOT NULL)");
     db.run("CREATE TABLE members(year INTEGER, json TEXT NOT NULL)");
+    db.run("CREATE TABLE leaders(startDate INTEGER NOT NULL, stravaAthleteId INTEGER NOT NULL, athleteName TEXT NOT NULL, jerseyName TEXT NOT NULL, clubId INTEGER)");
 }
 
 function insertRows(startDate, activityId, clubId, athleteId, type, shared, json, relatedActivities) {
@@ -34,9 +35,22 @@ function insertLeaderboard(segmentId, year, json) {
     stmt.finalize();
 }
 
+function insertLeader(date, stravaAthleteId, athleteName, jerseyName, clubId) {
+    var stmt = db.prepare("INSERT OR REPLACE INTO leaders VALUES (?,?,?,?,?)");
+    stmt.run(date, stravaAthleteId, athleteName, jerseyName, clubId);
+    stmt.finalize();
+}
+
 function readAllRows(table, callback) {
     db.all("SELECT rowid AS id, * FROM "+table, function(err, rows) {
         callback(rows);
+    });
+}
+
+function loadLeader(jersey, callback) {
+    var sqlQuery = 'SELECT stravaAthleteId, athleteName FROM leaders WHERE jerseyName = ' + jersey + ' ORDER BY date DESC';
+    db.get(sqlQuery, function(err, row) {
+        callback(row);
     });
 }
 
@@ -87,8 +101,10 @@ module.exports = {
   addActivity: function(startDate, activityId, clubId, athleteId, type, shared, json, relatedActivities){insertRows(startDate, activityId, clubId, athleteId, type, shared, json, relatedActivities)},
   addLeaderboard: function(segmentId, year, json){insertLeaderboard(segmentId, year, json)},
   addMembers: function(year, json){insertMembers(year, json)},
+  addLeader: function(date, stravaAthleteId, athleteName, jerseyName, clubId){insertLeader(date, stravaAthleteId, athleteName, jerseyName, clubId)},
   loadCyclingActivities: function(year, callback){loadCyclingActivities(year, callback)},
   loadMembers: function(year, callback){loadMembers(year, callback)},
   loadSegmentLeaderboard: function(segmentId, year, callback){loadSegmentLeaderboard(segmentId, year, callback)},
+  loadLeader: function(jersey, callback){loadLeader(jersey, callback)},
   close: function(){closeDb()}
 };
