@@ -97,6 +97,12 @@ var cacheData = function() {
         },
         function(callback) {
             cacheLeaderboard(stravaIds.MT_TAM_SEGMENT_ID, false, '', callback);
+        },
+        function(callback) {
+            cacheLeaderboard(stravaIds.STINSON_PANTOLL_ID, false, year, callback);
+        },
+        function(callback) {
+            cacheLeaderboard(stravaIds.STINSON_PANTOLL_ID, false, '', callback);
         }
     ], function (err, results) {
         if (err !== undefined) {

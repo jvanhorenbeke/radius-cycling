@@ -105,7 +105,7 @@ var loadClubAcitivities = function(year, callback) {
 };
 
 var retrievePolkaLeaderboard = function(year, standings, callback) {
-    var minClimbs = 4;
+    var minClimbs = 1;
     standings.sort(function (a, b) {
       if (a.polka_climbs < minClimbs) {
           if (b.polka_climbs < minClimbs) {
@@ -142,17 +142,18 @@ var retrieveGeneralLeaderboard = function(year, callback) {
             loadClubAcitivities(year, callback);
         },
         function(callback) {
-            retrievePolkaTimes(stravaIds.HAWK_HILL_SEGMENT_ID, year, callback);
-        },
-        function(callback) {
-            retrievePolkaTimes(stravaIds.CAMINO_ALTO_SEGMENT_ID, year, callback);
-        },
-        function(callback) {
-            retrievePolkaTimes(stravaIds.MT_TAM_SEGMENT_ID, year, callback);
-        },
-        function(callback) {
-            retrievePolkaTimes(stravaIds.FOUR_CORNERS_SEGMENT_ID, year, callback);
+            retrievePolkaTimes(stravaIds.STINSON_PANTOLL_ID, year, callback);
         }
+        //,
+        // function(callback) {
+        //     retrievePolkaTimes(stravaIds.CAMINO_ALTO_SEGMENT_ID, year, callback);
+        // },
+        // function(callback) {
+        //     retrievePolkaTimes(stravaIds.MT_TAM_SEGMENT_ID, year, callback);
+        // },
+        // function(callback) {
+        //     retrievePolkaTimes(stravaIds.FOUR_CORNERS_SEGMENT_ID, year, callback);
+        // }
     ], function (err, results) {
         if (err !== undefined) {
             console.log('Something went wrong: ' + err);

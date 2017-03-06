@@ -142,7 +142,7 @@ var generatePolkaRankings = function(polkaStandings) {
       '<td>{{time}}</td>'+
   '</tr>';
 
-  var minClimbs = 4;
+  var minClimbs = 1;
   polkaStandings.sort(function (a, b) {
     if (a.polka_climbs < minClimbs) {
         if (b.polka_climbs < minClimbs) {
