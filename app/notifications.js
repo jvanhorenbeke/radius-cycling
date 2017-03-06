@@ -38,7 +38,7 @@ var famousRiders = [
 /******************************************************************************/
 module.exports = {
     sendNotification: function(jerseyId, previousRider, newRider) {
-        var message = 'Wow! Looks like ' + newRider + ' takes the lead from ' +
+        var message = 'Wow! It looks like ' + newRider + ' takes the lead from ' +
         previousRider + ' for the ' + jerseyId + '.';
         sendSlackNotification(message);
     }

@@ -4,9 +4,8 @@
  Strava Specific Values
 *******************************************************************************/
 
-const clubId = '197635';
-
 module.exports = {
+	RADIUS_CLUB_ID : 197635, 
     HAWK_HILL_SEGMENT_ID : 229781,
     CAMINO_ALTO_SEGMENT_ID : 4783121,
     POLO_FIELD_SEGMENT_ID : 432873,

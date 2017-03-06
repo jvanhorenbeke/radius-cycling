@@ -5,9 +5,9 @@ const series = require('run-series')
 const database = require('./database');
 const strava = require('./strava');
 const stravaIds = require('./stravaIds');
+const jerseyIds = require('./jerseyIds'); 
 const notification = require('./notifications');
 var athletesMap = new Map();
-var leadersMap = new Map();
 database.init();
 
 /******************************************************************************/
@@ -22,15 +22,50 @@ var updateStats = function(id, distance, elevation, points, time, startDate) {
     athlete.polka_climbs += time === 0 ? 0 : 1;
 }
 
-var updateLeadersMap = function(jerseyId, athleteName) {
-    if (leadersMap.has(jerseyId)) {
-        var previousRider = leadersMap.get(jerseyId);
-        if (previousRider != athleteName) {
-            notification.sendNotification(jerseyId, previousRider, athleteName);
-        }
-    }
+var updateLeader = function(jerseyId, athlete) {
+    var athleteName = athlete.athleteName;
+    var athleteId = athlete.athleteId;
 
-    leadersMap.set(jerseyId, athleteName);
+    database.loadLeader(jerseyId, function(previousLeader) {
+        if (athlete && previousLeader.athleteName == athleteName) {
+            return;
+        }
+
+        database.addLeader(now(), athleteId, athleteName, jerseyId, stravaIds.RADIUS_CLUB_ID);
+        
+        if (athlete && previousLeader.athleteName != athleteName) {
+            var previousLeaderName = previousLeader.athleteName;
+            notification.sendNotification(jerseyId, previousLeaderName, athleteName);
+        }
+    });
+}
+
+var updateAllLeaders = function() {
+    //Update general classification
+    retrieveGeneralLeaderboard(getCurrentYear(), function(gcStandings) {
+        updateLeader(jerseyIds.YELLOW_JERSEY, gcStandings[0]);
+    });
+    
+    //Update climber jersey
+    retrieveGeneralLeaderboard(getCurrentYear(), function(gcStandings) {
+        retrievePolkaLeaderboard(getCurrentYear(), gcStandings, function(polkaStandings){
+            updateLeader(jerseyIds.POLKA_JERSEY, polkaStandings[0]);
+        });
+    });
+
+    //Update Sprinter jersey
+    retrieveSprinterLeaderboard(getCurrentYear(), function(json) {
+        if (json.entries.length > 1) {
+            updateLeader(jerseyIds.GREEN_JERSEY, json.entries[0]);
+        }
+    });
+
+    //Update Radius jersey
+    retrieveRadiusLeaderboard(getCurrentYear(), function(json) {
+        if (json.entries.length > 1) {
+            updateLeader(jerseyIds.RADIUS_JERSEY, json.entries[0]);
+        }
+    });
 }
 
 var loadSegmentLeaderboard = function(segmentId, year, callback) {
@@ -68,6 +103,34 @@ var loadClubAcitivities = function(year, callback) {
         callback();
     });
 };
+
+var retrievePolkaLeaderboard = function(year, standings, callback) {
+    var minClimbs = 4;
+    standings.sort(function (a, b) {
+      if (a.polka_climbs < minClimbs) {
+          if (b.polka_climbs < minClimbs) {
+              var dElev = b.elevation - a.elevation;
+              if(dElev) return dElev;
+          }
+          return 1;
+      }
+
+      if (b.polka_climbs < minClimbs) {
+          return -1;
+      }
+
+      // Sort by time
+      var dTime = a.time - b.time;
+      if(dTime) return dTime;
+
+      var dElevation = b.elevation - a.elevation;
+      if(dElevation) return dElevation;
+
+      return 0;
+    });
+
+    if (callback !== undefined) callback(standings);
+}
 
 var retrieveGeneralLeaderboard = function(year, callback) {
     athletesMap = new Map();
@@ -108,36 +171,6 @@ var retrieveGeneralLeaderboard = function(year, callback) {
             return 0;
         });
 
-        var polkaStandings = [...athletesMap.values()];
-        var minClimbs = 4;
-        polkaStandings.sort(function (a, b) {
-          if (a.polka_climbs < minClimbs) {
-              if (b.polka_climbs < minClimbs) {
-                  var dElev = b.elevation - a.elevation;
-                  if(dElev) return dElev;
-              }
-              return 1;
-          }
-
-          if (b.polka_climbs < minClimbs) {
-              return -1;
-          }
-
-          // Sort by time
-          var dTime = a.time - b.time;
-          if(dTime) return dTime;
-
-          var dElevation = b.elevation - a.elevation;
-          if(dElevation) return dElevation;
-
-          return 0;
-        });
-
-        if (isYearCurrent(year)) {
-            updateLeadersMap('Yellow Jersey', gcStandings[0].rider);
-            updateLeadersMap('Polka Jersey', polkaStandings[0].rider);
-        }
-
         if (callback !== undefined) callback(gcStandings);
     });
 }
@@ -169,6 +202,11 @@ var milesToMeters = function(miles) {
 var isYearCurrent = function(year) {
     return moment().utc().year() == year;
 }
+
+var getCurrentYear = function() {
+    return return moment().utc().year();
+}
+
 //Because of Strava API's limitation we need to hardcode the distances of older activities
 var loadFixedValues = function() {
     updateStats(3014007, milesToMeters(1694.8), feetToMeters(121244), milesToMeters(1694.8), 0, '2016-12-02T14:28:21Z');//Philip
@@ -192,18 +230,21 @@ var loadFixedValues = function() {
 module.exports = {
     retrieveRadiusLeaderboard: function(year, cb) {
         loadSegmentLeaderboard(stravaIds.HAWK_HILL_SEGMENT_ID, year, function(json) {
-            if (isYearCurrent(year))
-                updateLeadersMap('Radius Jersey', json.entries.length > 1 ? json.entries[0].athlete_name : '');
             cb(json);
         })
     },
     retrieveSprinterLeaderboard: function(year, cb) {
         loadSegmentLeaderboard(stravaIds.POLO_FIELD_SEGMENT_ID, year, function(json) {
-            if (isYearCurrent(year))
-                updateLeadersMap('Green Jersey', json.entries.length > 1 ? json.entries[0].athlete_name : '');
             cb(json);
         })
     },
-    retrieveCurrentGeneralLeaderboard: function(cb){retrieveGeneralLeaderboard(moment().utc().year(), cb)},
-    retrieveGeneralLeaderboard: function(year, cb){retrieveGeneralLeaderboard(year, cb)}
+    retrieveCurrentGeneralLeaderboard: function(cb) {
+        retrieveGeneralLeaderboard(moment().utc().year(), cb);
+    },
+    retrieveGeneralLeaderboard: function(year, cb){
+        retrieveGeneralLeaderboard(year, cb);
+    },
+    updateAllLeaders: function() {
+        updateAllLeaders();
+    }
 };
