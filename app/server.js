@@ -19,6 +19,10 @@ var milisInMinutes = 60*1000;
 setInterval(function() {
     console.log('Cache Latest Strava Activities For Club');
     strava.cacheData();
+    setTimeout(function() {
+        console.log('Update leaders for notifications');
+        rankings.updateAllLeaders();
+    }, 10*milisInMinutes)
 }, 120*milisInMinutes);
 
 // ----------------------------- ROUTES -----------------------------
