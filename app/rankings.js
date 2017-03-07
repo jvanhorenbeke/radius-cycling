@@ -5,7 +5,7 @@ const series = require('run-series')
 const database = require('./database');
 const strava = require('./strava');
 const stravaIds = require('./stravaIds');
-const jerseyIds = require('./jerseyIds'); 
+const jerseyIds = require('./jerseyIds');
 const notification = require('./notifications');
 var athletesMap = new Map();
 database.init();
@@ -32,7 +32,7 @@ var updateLeader = function(jerseyId, athlete) {
         }
 
         database.addLeader(now(), athleteId, athleteName, jerseyId, stravaIds.RADIUS_CLUB_ID);
-        
+
         if (athlete && previousLeader.athleteName != athleteName) {
             var previousLeaderName = previousLeader.athleteName;
             notification.sendNotification(jerseyId, previousLeaderName, athleteName);
@@ -45,7 +45,7 @@ var updateAllLeaders = function() {
     retrieveGeneralLeaderboard(getCurrentYear(), function(gcStandings) {
         updateLeader(jerseyIds.YELLOW_JERSEY, gcStandings[0]);
     });
-    
+
     //Update climber jersey
     retrieveGeneralLeaderboard(getCurrentYear(), function(gcStandings) {
         retrievePolkaLeaderboard(getCurrentYear(), gcStandings, function(polkaStandings){
@@ -205,7 +205,7 @@ var isYearCurrent = function(year) {
 }
 
 var getCurrentYear = function() {
-    return return moment().utc().year();
+    return moment().utc().year();
 }
 
 //Because of Strava API's limitation we need to hardcode the distances of older activities

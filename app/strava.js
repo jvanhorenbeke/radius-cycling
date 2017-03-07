@@ -99,7 +99,7 @@ var cacheData = function() {
             cacheLeaderboard(stravaIds.MT_TAM_SEGMENT_ID, false, '', callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.STINSON_PANTOLL_ID, false, year, callback);
+            cacheLeaderboard(stravaIds.STINSON_PANTOLL_ID, true, year, callback);
         },
         function(callback) {
             cacheLeaderboard(stravaIds.STINSON_PANTOLL_ID, false, '', callback);
