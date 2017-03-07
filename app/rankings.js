@@ -23,18 +23,18 @@ var updateStats = function(id, distance, elevation, points, time, startDate) {
 }
 
 var updateLeader = function(jerseyId, athlete) {
-    var athleteName = athlete.athleteName;
-    var athleteId = athlete.athleteId;
+    var athleteName = athlete.athlete_name ? athlete.athlete_name : athlete.rider;
+    var athleteId = athlete.athlete_id;
 
     database.loadLeader(jerseyId, function(previousLeader) {
-        if (athlete && previousLeader.athleteName == athleteName) {
+        if (previousLeader && previousLeader.athleteName == athleteName) {
             return;
         }
 
-        database.addLeader(now(), athleteId, athleteName, jerseyId, stravaIds.RADIUS_CLUB_ID);
+        database.addLeader(Date.now(), athleteId, athleteName, jerseyId, stravaIds.RADIUS_CLUB_ID);
 
-        if (athlete && previousLeader.athleteName != athleteName) {
-            var previousLeaderName = previousLeader.athleteName;
+        if (previousLeader && previousLeader.athlete_name != athleteName) {
+            var previousLeaderName = previousLeader.athlete_name;
             notification.sendNotification(jerseyId, previousLeaderName, athleteName);
         }
     });
@@ -54,14 +54,14 @@ var updateAllLeaders = function() {
     });
 
     //Update Sprinter jersey
-    retrieveSprinterLeaderboard(getCurrentYear(), function(json) {
+    loadSegmentLeaderboard(stravaIds.POLO_FIELD_SEGMENT_ID, getCurrentYear(), function(json) {
         if (json.entries.length > 1) {
             updateLeader(jerseyIds.GREEN_JERSEY, json.entries[0]);
         }
     });
 
     //Update Radius jersey
-    retrieveRadiusLeaderboard(getCurrentYear(), function(json) {
+    loadSegmentLeaderboard(stravaIds.HAWK_HILL_SEGMENT_ID, getCurrentYear(), function(json) {
         if (json.entries.length > 1) {
             updateLeader(jerseyIds.RADIUS_JERSEY, json.entries[0]);
         }
@@ -77,6 +77,7 @@ var retrieveClubMembers = function(year, callback) {
         data.forEach(function(member, i) {
             if (!athletesMap.has(member.id)) {
                 athletesMap.set(member.id, {
+                    'athlete_id' : member.id,
                     'distance' : 0,
                     'elevation' : 0,
                     'points' : 0,
