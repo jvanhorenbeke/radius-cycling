@@ -18,6 +18,11 @@ Radius Cycling Leaderboard uses a Year to date ranking system based on the [Stra
 - up and down arrows.
 - How to reflect running miles? Should there be a triathlon version? What would we measure? Total miles, speed, etc?
 
+### New login site:
+- https://vuejs.org/v2/guide/
+- oAuth
+- Simple pages with 5 jersey that already have a configuration. 
+
 ### Technical debt:
 - Clean up jQuery bindings, use better framework
 - Import old activities in DB, hardcoded delta.
