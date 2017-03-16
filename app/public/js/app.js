@@ -1,4 +1,5 @@
 var serverUrl = '';
+var activityUrl = 'https://www.strava.com/activities/';
 
 //Compose template string
 String.prototype.compose = (function (){
@@ -79,14 +80,15 @@ var generateGreenMaillotRankings = function(data) {
     var row = '<tr>'+
       '<th scope="row">{{id}}</th>'+
       '<td>{{name}}</td>'+
-      '<td>{{time}}</td>'+
+      '<td><a href="' + activityUrl + '{{activityId}}">{{time}}>/a></td>'+
     '</tr>';
 
     if (data.entries.length < 1) {
         table.append(row.compose({
             'id': '--',
             'name': '<i>No results</i>',
-            'time': '--'
+            'time': '--',
+            'activityId': '#'
         }));
     }
 
@@ -94,7 +96,8 @@ var generateGreenMaillotRankings = function(data) {
         table.append(row.compose({
             'id': i+1,
             'name': i == 0 ? radiusJerseyImg + rider.athlete_name : rider.athlete_name,
-            'time': rider.elapsed_time + ' s'
+            'time': rider.elapsed_time + ' s',
+            'activityId': rider.activity_id
         }));
     });
 }
@@ -106,7 +109,7 @@ var generateRadiusRankings = function(data) {
   var row = '<tr>'+
       '<th scope="row">{{id}}</th>'+
       '<td>{{name}}</td>'+
-      '<td>{{time}}</td>'+
+      '<td><a href="' + activityUrl + '{{activityId}}">{{time}}>/a></td>'+
       '<td>{{gap}}</td>'+
   '</tr>';
 
@@ -115,7 +118,8 @@ var generateRadiusRankings = function(data) {
           'id': '--',
           'name': '<i>No results</i>',
           'time': '--',
-          'gap': '--'
+          'gap': '--',
+          'activityId': '#'
       }));
   }
 
@@ -125,7 +129,8 @@ var generateRadiusRankings = function(data) {
         'id': i+1,
         'name': i == 0 ? radiusJerseyImg + rider.athlete_name : rider.athlete_name,
         'time': moment.utc(rider.elapsed_time*1000).format('mm:ss'),
-        'gap': i == 0 ? '--' : rider.elapsed_time - gap + ' s'
+        'gap': i == 0 ? '--' : rider.elapsed_time - gap + ' s',
+        'activityId': rider.activity_id
     }));
     gap = i == 0 ? rider.elapsed_time : gap;
   });
