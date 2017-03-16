@@ -1,5 +1,6 @@
 var serverUrl = '';
 var activityUrl = 'https://www.strava.com/activities/';
+var athleteUrl = 'https://www.strava.com/athletes/';
 
 //Compose template string
 String.prototype.compose = (function (){
@@ -189,7 +190,7 @@ var generateYellowMaillotRankings = function(gcStandings) {
   var table = tbody.length ? tbody : $('#yellowMaillot');
   var row = '<tr>'+
       '<th scope="row">{{id}}</th>'+
-      '<td><img src="{{picture}}" class="avatar"/></td>'+
+      '<td><a href="' + athleteUrl + '{{athleteId}}"><img src="{{picture}}" class="avatar"/></a></td>'+
       '<td>{{name}}</td>'+
       '<td>{{distance}} mi</td>'+
       '<td>{{points}}</td>'+
@@ -205,7 +206,8 @@ var generateYellowMaillotRankings = function(gcStandings) {
         'name': i == 1 ? yellowJerseyImg + rider.rider : rider.rider,
         'distance': metersToMiles(rider.distance).toLocaleString(),
         'gap': i == 1 ? '--' : metersToMiles(gap - rider.points).toLocaleString(),
-        'points': metersToMiles(rider.points)
+        'points': metersToMiles(rider.points),
+        'athleteId': rider.id
     }));
     gap = i == 1 ? rider.points : gap;
   };
