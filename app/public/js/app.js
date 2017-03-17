@@ -36,7 +36,7 @@ var loadSprinterLeaderBoard = function(params) {
 
 //--------------- Sprinter Leaderboard ---------------
 var loadPolkaLeaderBoard = function(params) {
-  $.ajax({url: serverUrl + "/polja" + params})
+  $.ajax({url: serverUrl + "/polka" + params})
    .done(function (data) {
      generatePolkaRankings(data);
    })
@@ -58,7 +58,6 @@ var loadClubRankings = function() {
      .done(function (data) {
           //now that all our data is loaded we print the values;
           generateYellowMaillotRankings(data);
-          // generatePolkaRankings(data);
           loadSprinterLeaderBoard(params);
           loadRadiusLeaderBoard(params);
           loadPolkaLeaderBoard(params);
@@ -69,11 +68,11 @@ var loadClubRankings = function() {
 }
 // ------------------ Util functions ---------------------
 var metersToMiles = function(meters) {
-  return Math.round(meters/1000*0.62137);
+    return Math.round(meters/1000*0.62137);
 }
 
 var metersToFeet = function(meters) {
-  return Math.round(meters*3.28084);
+    return Math.round(meters*3.28084);
 }
 
 var speedToMiles = function(metersPerSeconds) {
@@ -86,25 +85,25 @@ var getUrlVar = function(key) {
 	return result && unescape(result[1]) || "";
 }
 // ------------------ Bind data to HTML elements ---------------------
-var generateGreenMaillotRankings = function(data) {
+var generateGreenMaillotRankings = function(standings) {
     var jerseyImg = '<img src="./res/Jersey_green.svg.png" class="jersey" />';
     var tbody = $('#greenMaillot').children('tbody');
     var table = tbody.length ? tbody : $('#greenMaillot');
-    generateSegmentRankings(data, false, table, jerseyImg);
+    generateSegmentRankings(standings, false, table, jerseyImg);
 }
 
-var generateRadiusRankings = function(data) {
-  var jerseyImg = '<img src="./res/Jersey_blue.svg.png" class="jersey" />';
-  var tbody = $('#radiusMaillot').children('tbody');
-  var table = tbody.length ? tbody : $('#radiusMaillot');
-  generateSegmentRankings(data, true, table, jerseyImg);
+var generateRadiusRankings = function(standings) {
+    var jerseyImg = '<img src="./res/Jersey_blue.svg.png" class="jersey" />';
+    var tbody = $('#radiusMaillot').children('tbody');
+    var table = tbody.length ? tbody : $('#radiusMaillot');
+    generateSegmentRankings(standings, true, table, jerseyImg);
 }
 
-var generatePolkaRankingsSegment = function(polkaStandings) {
-  var jerseyImg = '<img src="./res/Jersey_polkadot.svg.png" class="jersey" />';
-  var tbody = $('#polkaMaillot').children('tbody');
-  var table = tbody.length ? tbody : $('#polkaMaillot');
-  generateSegmentRankings(polkaStandings, true, table, jerseyImg);
+var generatePolkaRankings = function(polkaStandings) {
+    var jerseyImg = '<img src="./res/Jersey_polkadot.svg.png" class="jersey" />';
+    var tbody = $('#polkaMaillot').children('tbody');
+    var table = tbody.length ? tbody : $('#polkaMaillot');
+    generateSegmentRankings(polkaStandings, true, table, jerseyImg);
 }
 
 var generateSegmentRankings = function(standings, hasGap, table, jerseyImg) {
@@ -115,7 +114,7 @@ var generateSegmentRankings = function(standings, hasGap, table, jerseyImg) {
       (hasGap ? '<td>{{gap}}</td>' : '') +
   '</tr>';
 
-  if (data.entries.length < 1) {
+  if (standings.entries.length < 1) {
       table.append(row.compose({
           'id': '--',
           'name': '<i>No results</i>',
@@ -126,7 +125,7 @@ var generateSegmentRankings = function(standings, hasGap, table, jerseyImg) {
   }
 
   var gap = 0;
-  $.each(data.entries, function(i, rider) {
+  $.each(standings.entries, function(i, rider) {
     table.append(row.compose({
         'id': i+1,
         'name': i == 0 ? jerseyImg + rider.athlete_name : rider.athlete_name,
@@ -136,53 +135,6 @@ var generateSegmentRankings = function(standings, hasGap, table, jerseyImg) {
     }));
     gap = i == 0 ? rider.elapsed_time : gap;
   });
-}
-
-var generatePolkaRankings = function(polkaStandings) {
-  var polkaJerseyImg = '<img src="./res/Jersey_polkadot.svg.png" class="jersey" />';
-  var tbody = $('#polkaMaillot').children('tbody');
-  var table = tbody.length ? tbody : $('#polkaMaillot');
-  var row = '<tr>'+
-      '<th scope="row">{{id}}</th>'+
-      '<td>{{name}}</td>'+
-      '<td>{{elevation}}</td>'+
-      '<td>{{time}}</td>'+
-  '</tr>';
-
-  var minClimbs = 1;
-  polkaStandings.sort(function (a, b) {
-    if (a.polka_climbs < minClimbs) {
-        if (b.polka_climbs < minClimbs) {
-            var dElev = b.elevation - a.elevation;
-            if(dElev) return dElev;
-        }
-        return 1;
-    }
-
-    if (b.polka_climbs < minClimbs) {
-        return -1;
-    }
-
-    // Sort by time
-    var dTime = a.time - b.time;
-    if(dTime) return dTime;
-
-    var dElevation = b.elevation - a.elevation;
-    if(dElevation) return dElevation;
-
-    return 0;
-  });
-
-  var i = 0;
-  for (var rider of polkaStandings) {
-    var time =  minClimbs > rider.polka_climbs ? 0 : rider.time;
-    table.append(row.compose({
-        'id': ++i,
-        'name': i == 1 ? polkaJerseyImg + rider.rider : rider.rider,
-        'elevation': metersToFeet(rider.elevation).toLocaleString() + ' ft',
-        'time': moment.utc(time*1000).format('HH:mm:ss'),
-    }));
-  }
 }
 
 var generateYellowMaillotRankings = function(gcStandings) {
