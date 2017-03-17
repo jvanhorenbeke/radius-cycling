@@ -240,6 +240,11 @@ module.exports = {
             cb(json);
         })
     },
+    retrievePolkaLeaderboard: function(year, cb) {
+        loadSegmentLeaderboard(stravaIds.STINSON_PANTOLL_ID, year, function(json) {
+            cb(json);
+        })
+    },
     retrieveCurrentGeneralLeaderboard: function(cb) {
         retrieveGeneralLeaderboard(moment().utc().year(), cb);
     },

@@ -60,6 +60,17 @@ server.route({
 
 server.route({
     method: 'GET',
+    path: '/polka/{year?}',
+    handler: function (request, reply) {
+        var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
+        rankings.retrievePolkaLeaderboard(year, function(data) {
+            reply(data);
+        });
+    }
+});
+
+server.route({
+    method: 'GET',
     path: '/general/{year?}',
     handler: function (request, reply) {
         var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();

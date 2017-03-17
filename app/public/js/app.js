@@ -23,14 +23,25 @@ var loadRadiusLeaderBoard = function(params) {
    });
 };
 
-//--------------- Polo Field Leaderboard ---------------
+//--------------- Sprinter Leaderboard ---------------
 var loadSprinterLeaderBoard = function(params) {
   $.ajax({url: serverUrl + "/sprinters" + params})
    .done(function (data) {
      generateGreenMaillotRankings(data);
    })
    .fail(function (jqXHR, textStatus) {
-      console.log('unable to retrieve Polo Field leaderboard');
+      console.log('unable to retrieve Sprinter leaderboard');
+   });
+}
+
+//--------------- Sprinter Leaderboard ---------------
+var loadPolkaLeaderBoard = function(params) {
+  $.ajax({url: serverUrl + "/polja" + params})
+   .done(function (data) {
+     generatePolkaRankings(data);
+   })
+   .fail(function (jqXHR, textStatus) {
+      console.log('unable to retrieve Polka leaderboard');
    });
 }
 
@@ -47,9 +58,10 @@ var loadClubRankings = function() {
      .done(function (data) {
           //now that all our data is loaded we print the values;
           generateYellowMaillotRankings(data);
-          generatePolkaRankings(data);
+          // generatePolkaRankings(data);
           loadSprinterLeaderBoard(params);
           loadRadiusLeaderBoard(params);
+          loadPolkaLeaderBoard(params);
      })
      .fail(function (jqXHR, textStatus) {
         console.log('unable to retrieve GC ranking');
@@ -75,43 +87,32 @@ var getUrlVar = function(key) {
 }
 // ------------------ Bind data to HTML elements ---------------------
 var generateGreenMaillotRankings = function(data) {
-    var radiusJerseyImg = '<img src="./res/Jersey_green.svg.png" class="jersey" />';
+    var jerseyImg = '<img src="./res/Jersey_green.svg.png" class="jersey" />';
     var tbody = $('#greenMaillot').children('tbody');
     var table = tbody.length ? tbody : $('#greenMaillot');
-    var row = '<tr>'+
-      '<th scope="row">{{id}}</th>'+
-      '<td>{{name}}</td>'+
-      '<td><a href="' + activityUrl + '{{activityId}}">{{time}}>/a></td>'+
-    '</tr>';
-
-    if (data.entries.length < 1) {
-        table.append(row.compose({
-            'id': '--',
-            'name': '<i>No results</i>',
-            'time': '--',
-            'activityId': '#'
-        }));
-    }
-
-    $.each(data.entries, function(i, rider) {
-        table.append(row.compose({
-            'id': i+1,
-            'name': i == 0 ? radiusJerseyImg + rider.athlete_name : rider.athlete_name,
-            'time': rider.elapsed_time + ' s',
-            'activityId': rider.activity_id
-        }));
-    });
+    generateSegmentRankings(data, false, table, jerseyImg);
 }
 
 var generateRadiusRankings = function(data) {
-  var radiusJerseyImg = '<img src="./res/Jersey_blue.svg.png" class="jersey" />';
+  var jerseyImg = '<img src="./res/Jersey_blue.svg.png" class="jersey" />';
   var tbody = $('#radiusMaillot').children('tbody');
   var table = tbody.length ? tbody : $('#radiusMaillot');
+  generateSegmentRankings(data, true, table, jerseyImg);
+}
+
+var generatePolkaRankingsSegment = function(polkaStandings) {
+  var jerseyImg = '<img src="./res/Jersey_polkadot.svg.png" class="jersey" />';
+  var tbody = $('#polkaMaillot').children('tbody');
+  var table = tbody.length ? tbody : $('#polkaMaillot');
+  generateSegmentRankings(polkaStandings, true, table, jerseyImg);
+}
+
+var generateSegmentRankings = function(standings, hasGap, table, jerseyImg) {
   var row = '<tr>'+
       '<th scope="row">{{id}}</th>'+
       '<td>{{name}}</td>'+
-      '<td><a href="' + activityUrl + '{{activityId}}">{{time}}>/a></td>'+
-      '<td>{{gap}}</td>'+
+      '<td>{{time}}</td>'+
+      (hasGap ? '<td>{{gap}}</td>' : '') +
   '</tr>';
 
   if (data.entries.length < 1) {
@@ -128,9 +129,9 @@ var generateRadiusRankings = function(data) {
   $.each(data.entries, function(i, rider) {
     table.append(row.compose({
         'id': i+1,
-        'name': i == 0 ? radiusJerseyImg + rider.athlete_name : rider.athlete_name,
+        'name': i == 0 ? jerseyImg + rider.athlete_name : rider.athlete_name,
         'time': moment.utc(rider.elapsed_time*1000).format('mm:ss'),
-        'gap': i == 0 ? '--' : rider.elapsed_time - gap + ' s',
+        'gap': i == 0 ? '--' : moment.utc(rider.elapsed_time - gap).format('mm:ss'),
         'activityId': rider.activity_id
     }));
     gap = i == 0 ? rider.elapsed_time : gap;
