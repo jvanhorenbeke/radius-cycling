@@ -109,8 +109,8 @@ var generatePolkaRankings = function(polkaStandings) {
 var generateSegmentRankings = function(standings, hasGap, table, jerseyImg) {
   var row = '<tr>'+
       '<th scope="row">{{id}}</th>'+
-      '<td>{{name}}</td>'+
-      '<td>{{time}}</td>'+
+      '<td><a href="' + activityUrl + '{{activityId}}">{{name}}</a></td>'+
+      '<td><a href="' + activityUrl + '{{activityId}}">{{time}}</a></td>'+
       (hasGap ? '<td>{{gap}}</td>' : '') +
   '</tr>';
 
@@ -144,7 +144,7 @@ var generateYellowMaillotRankings = function(gcStandings) {
   var row = '<tr>'+
       '<th scope="row">{{id}}</th>'+
       '<td><a href="' + athleteUrl + '{{athleteId}}"><img src="{{picture}}" class="avatar"/></a></td>'+
-      '<td>{{name}}</td>'+
+      '<td><a href="' + athleteUrl + '{{athleteId}}">{{name}}</a></td>'+
       '<td>{{distance}} mi</td>'+
       '<td>{{points}}</td>'+
       '<td>{{gap}}</td>'+
@@ -164,7 +164,7 @@ var generateYellowMaillotRankings = function(gcStandings) {
         'distance': metersToMiles(rider.distance).toLocaleString(),
         'gap': i == 1 ? '--' : metersToMiles(gap - rider.points).toLocaleString(),
         'points': metersToMiles(rider.points),
-        'athleteId': rider.id
+        'athleteId': rider.athlete_id
     }));
     gap = i == 1 ? rider.points : gap;
   };
