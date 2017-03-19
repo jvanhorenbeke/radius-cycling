@@ -130,7 +130,7 @@ var generateSegmentRankings = function(standings, hasGap, table, jerseyImg) {
         'id': i+1,
         'name': i == 0 ? jerseyImg + rider.athlete_name : rider.athlete_name,
         'time': moment.utc(rider.elapsed_time*1000).format('mm:ss'),
-        'gap': i == 0 ? '--' : moment.utc(rider.elapsed_time - gap).format('mm:ss'),
+        'gap': i == 0 ? '--' : moment.utc(1000*(rider.elapsed_time - gap)).format('mm:ss'),
         'activityId': rider.activity_id
     }));
     gap = i == 0 ? rider.elapsed_time : gap;
