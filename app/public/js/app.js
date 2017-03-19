@@ -153,6 +153,10 @@ var generateYellowMaillotRankings = function(gcStandings) {
   var i = 0;
   var gap = 0;
   for (var rider of gcStandings) {
+    if (rider.distance <= 0) {
+        continue;
+    }
+
     table.append(row.compose({
         'id': ++i,
         'picture': rider.profilePicture,
