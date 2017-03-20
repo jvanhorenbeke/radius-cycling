@@ -38,6 +38,39 @@ server.route({
 
 server.route({
     method: 'GET',
+    path: '/boards/{clubId?}',
+    handler: function (request, reply) {
+        reply([
+            {
+                "id" : "yellowMaillot",
+                "name" : "general",
+                "jersey" : "yellow",
+                "hasGap" : true
+            },
+            {
+                "id" : "polkaMaillot",
+                "name" : "polka",
+                "jersey" : "polkadot",
+                "hasGap" : true
+            },
+            {
+                "id" : "greenMaillot",
+                "name" : "sprinters",
+                "jersey" : "green",
+                "hasGap" : false
+            },
+            {
+                "id" : "radiusMaillot",
+                "name" : "radius",
+                "jersey" : "blue",
+                "hasGap" : true
+            }
+        ]);
+    }
+});
+
+server.route({
+    method: 'GET',
     path: '/radius/{year?}',
     handler: function (request, reply) {
         var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
