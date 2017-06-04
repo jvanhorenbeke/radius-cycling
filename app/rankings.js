@@ -22,16 +22,16 @@ var updateStats = function(id, distance, elevation, points, time, startDate) {
     athlete.polka_climbs += time === 0 ? 0 : 1;
 }
 
-var updateLeader = function(jerseyId, athlete) {
+var updateLeader = function(jerseyId, athlete, clubId) {
     var athleteName = athlete.athlete_name ? athlete.athlete_name : athlete.rider;
     var athleteId = athlete.athlete_id;
 
-    database.loadLeader(jerseyId, function(previousLeader) {
+    database.loadLeader(jerseyId, clubId, function(previousLeader) {
         if (previousLeader && previousLeader.athleteName == athleteName) {
             return;
         }
 
-        database.addLeader(Date.now(), athleteId, athleteName, jerseyId, stravaIds.RADIUS_CLUB_ID);
+        database.addLeader(Date.now(), athleteId, athleteName, jerseyId, clubId);
 
         if (previousLeader && previousLeader.athlete_name != athleteName) {
             var previousLeaderName = previousLeader.athlete_name;
@@ -68,12 +68,12 @@ var updateAllLeaders = function() {
     });
 }
 
-var loadSegmentLeaderboard = function(segmentId, year, callback) {
-    database.loadSegmentLeaderboard(segmentId, year, callback);
+var loadSegmentLeaderboard = function(segmentId, year, clubId, callback) {
+    database.loadSegmentLeaderboard(segmentId, year, clubId, callback);
 }
 
-var retrieveClubMembers = function(year, callback) {
-    database.loadMembers(year, function(data) {
+var retrieveClubMembers = function(year, clubId, callback) {
+    database.loadMembers(year, clubId, function(data) {
         data.forEach(function(member, i) {
             if (!athletesMap.has(member.id)) {
                 athletesMap.set(member.id, {
@@ -92,8 +92,8 @@ var retrieveClubMembers = function(year, callback) {
     });
 };
 
-var loadClubAcitivities = function(year, callback) {
-    database.loadCyclingActivities(year, function processActivities(rows) {
+var loadClubAcitivities = function(year, clubId, callback) {
+    database.loadCyclingActivities(year, clubId, function processActivities(rows) {
         rows.forEach(function(activity) {
             if ((activity.type == 'Ride' || activity.type == 'VirtualRide') && activity.commute == false) {
                 updateStats(activity.athlete.id, activity.distance,
@@ -133,17 +133,17 @@ var retrievePolkaLeaderboard = function(year, standings, callback) {
     if (callback !== undefined) callback(standings);
 }
 
-var retrieveGeneralLeaderboard = function(year, callback) {
+var retrieveGeneralLeaderboard = function(year, clubId, callback) {
     athletesMap = new Map();
     series([
         function(callback) {
-            retrieveClubMembers(year, callback);
+            retrieveClubMembers(year, clubId, callback);
         },
         function(callback) {
-            loadClubAcitivities(year, callback);
+            loadClubAcitivities(year, clubId, callback);
         },
         function(callback) {
-            retrievePolkaTimes(stravaIds.STINSON_PANTOLL_ID, year, callback);
+            retrievePolkaTimes(stravaIds.STINSON_PANTOLL_ID, year, clubId, callback);
         }
         //,
         // function(callback) {
@@ -177,8 +177,8 @@ var retrieveGeneralLeaderboard = function(year, callback) {
     });
 }
 
-var retrievePolkaTimes = function(segmentId, year, callback) {
-    loadSegmentLeaderboard(segmentId, year, function handleSegmentResults(data) {
+var retrievePolkaTimes = function(segmentId, year, clubId, callback) {
+    loadSegmentLeaderboard(segmentId, year, clubId, function handleSegmentResults(data) {
         //don't process if undefined or empty
         if (!data || data.entries.length < 1) {
             return callback();
@@ -230,26 +230,26 @@ var loadFixedValues = function() {
 
 /******************************************************************************/
 module.exports = {
-    retrieveRadiusLeaderboard: function(year, cb) {
-        loadSegmentLeaderboard(stravaIds.HAWK_HILL_SEGMENT_ID, year, function(json) {
+    retrieveRadiusLeaderboard: function(year, clubId, cb) {
+        loadSegmentLeaderboard(stravaIds.HAWK_HILL_SEGMENT_ID, year, clubId, function(json) {
             cb(json);
         })
     },
-    retrieveSprinterLeaderboard: function(year, cb) {
-        loadSegmentLeaderboard(stravaIds.POLO_FIELD_SEGMENT_ID, year, function(json) {
+    retrieveSprinterLeaderboard: function(year, clubId, cb) {
+        loadSegmentLeaderboard(stravaIds.POLO_FIELD_SEGMENT_ID, year, clubId, function(json) {
             cb(json);
         })
     },
-    retrievePolkaLeaderboard: function(year, cb) {
-        loadSegmentLeaderboard(stravaIds.STINSON_PANTOLL_ID, year, function(json) {
+    retrievePolkaLeaderboard: function(year, clubId, cb) {
+        loadSegmentLeaderboard(stravaIds.STINSON_PANTOLL_ID, year, clubId, function(json) {
             cb(json);
         })
     },
-    retrieveCurrentGeneralLeaderboard: function(cb) {
-        retrieveGeneralLeaderboard(moment().utc().year(), cb);
+    retrieveCurrentGeneralLeaderboard: function(clubId, cb) {
+        retrieveGeneralLeaderboard(moment().utc().year(), clubId, cb);
     },
-    retrieveGeneralLeaderboard: function(year, cb){
-        retrieveGeneralLeaderboard(year, cb);
+    retrieveGeneralLeaderboard: function(year, clubId, cb){
+        retrieveGeneralLeaderboard(year, clubId, cb);
     },
     updateAllLeaders: function() {
         updateAllLeaders();

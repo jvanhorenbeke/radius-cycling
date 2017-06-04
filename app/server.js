@@ -2,10 +2,12 @@
 
 const Hapi = require('hapi');
 const moment = require('moment');
-const database = require('./database');
 const strava = require('./strava');
 const rankings = require('./rankings');
 const server = new Hapi.Server();
+
+// Strava Specific TEMP
+const clubId = '197635';
 
 // let heroku set the port
 var herokuPort = process.env.PORT || 3000
@@ -21,7 +23,7 @@ setInterval(function() {
     strava.cacheData();
     setTimeout(function() {
         console.log('Update leaders for notifications');
-        rankings.updateAllLeaders();
+        // rankings.updateAllLeaders();
     }, 10*milisInMinutes)
 }, 120*milisInMinutes);
 
@@ -74,7 +76,7 @@ server.route({
     path: '/radius/{year?}',
     handler: function (request, reply) {
         var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
-        rankings.retrieveRadiusLeaderboard(year, function(data) {
+        rankings.retrieveRadiusLeaderboard(year, clubId, function(data) {
             reply(data);
         });
     }
@@ -85,7 +87,7 @@ server.route({
     path: '/sprinters/{year?}',
     handler: function (request, reply) {
         var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
-        rankings.retrieveSprinterLeaderboard(year, function(data) {
+        rankings.retrieveSprinterLeaderboard(year, clubId, function(data) {
             reply(data);
         });
     }
@@ -96,7 +98,7 @@ server.route({
     path: '/polka/{year?}',
     handler: function (request, reply) {
         var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
-        rankings.retrievePolkaLeaderboard(year, function(data) {
+        rankings.retrievePolkaLeaderboard(year, clubId, function(data) {
             reply(data);
         });
     }
@@ -107,7 +109,7 @@ server.route({
     path: '/general/{year?}',
     handler: function (request, reply) {
         var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
-        rankings.retrieveGeneralLeaderboard(year, function(data) {
+        rankings.retrieveGeneralLeaderboard(year, clubId, function(data) {
             reply(data);
         });
     }

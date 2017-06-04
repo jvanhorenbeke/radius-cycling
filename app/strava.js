@@ -10,10 +10,7 @@ axios.defaults.baseURL = 'https://www.strava.com/api/v3';
 axios.defaults.headers.common['Authorization'] = bearerToken;
 database.init();
 
-// Strava Specific
-const clubId = '197635';
-
-var retrieveClubMembers = function(callback) {
+var retrieveClubMembers = function(clubId, callback) {
     console.log('[Strava] retrieving Club Members');
     axios.get("clubs/"+clubId+"/members?per_page=200")
         .then(function (response) {
@@ -24,7 +21,7 @@ var retrieveClubMembers = function(callback) {
         });
 };
 
-var retrieveSegment = function(segmentId, onlyYtd, callback) {
+var retrieveSegment = function(segmentId, onlyYtd, clubId, callback) {
     console.log('[Strava] retrieving Segment: ' + segmentId);
     var timeFilter = '';
     if (onlyYtd) { timeFilter = "&date_range=this_year"; }
@@ -52,57 +49,57 @@ var retrieveRelatedActivity = function(activityId, callback) {
  Cache Strava Activities and Members:
 *******************************************************************************/
 var athletesSet = new Set();
-var cacheData = function() {
+var cacheData = function(clubId) {
     var year = moment().utc().year();
     series([
         function(callback) {
-            cacheClubMembers(callback);
+            cacheClubMembers(clubId, callback);
         },
         function(callback) {
-            cacheLatestActivities(callback);
+            cacheLatestActivities(clubId, callback);
         },
         function(callback) {
             console.log('[Strava] Updating Leaderboards in database/cache');
-            cacheLeaderboard(stravaIds.HAWK_HILL_SEGMENT_ID, true, year, callback);
+            cacheLeaderboard(stravaIds.HAWK_HILL_SEGMENT_ID, true, year, clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.HAWK_HILL_SEGMENT_ID, false, '', callback);
+            cacheLeaderboard(stravaIds.HAWK_HILL_SEGMENT_ID, false, '', clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.POLO_FIELD_SEGMENT_ID, true, year, callback);
+            cacheLeaderboard(stravaIds.POLO_FIELD_SEGMENT_ID, true, year, clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.POLO_FIELD_SEGMENT_ID, false, '', callback);
+            cacheLeaderboard(stravaIds.POLO_FIELD_SEGMENT_ID, false, '', clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.FOUR_CORNERS_SEGMENT_ID, true, year, callback);
+            cacheLeaderboard(stravaIds.FOUR_CORNERS_SEGMENT_ID, true, year, clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.FOUR_CORNERS_SEGMENT_ID, false, '', callback);
+            cacheLeaderboard(stravaIds.FOUR_CORNERS_SEGMENT_ID, false, '', clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.PANTOLL_SEGMENT_ID, true, year, callback);
+            cacheLeaderboard(stravaIds.PANTOLL_SEGMENT_ID, true, year, clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.PANTOLL_SEGMENT_ID, false, '', callback);
+            cacheLeaderboard(stravaIds.PANTOLL_SEGMENT_ID, false, '', clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.CAMINO_ALTO_SEGMENT_ID, true, year, callback);
+            cacheLeaderboard(stravaIds.CAMINO_ALTO_SEGMENT_ID, true, year, clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.CAMINO_ALTO_SEGMENT_ID, false, '', callback);
+            cacheLeaderboard(stravaIds.CAMINO_ALTO_SEGMENT_ID, false, '', clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.MT_TAM_SEGMENT_ID, true, year, callback);
+            cacheLeaderboard(stravaIds.MT_TAM_SEGMENT_ID, true, year, clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.MT_TAM_SEGMENT_ID, false, '', callback);
+            cacheLeaderboard(stravaIds.MT_TAM_SEGMENT_ID, false, '', clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.STINSON_PANTOLL_ID, true, year, callback);
+            cacheLeaderboard(stravaIds.STINSON_PANTOLL_ID, true, year, clubId, callback);
         },
         function(callback) {
-            cacheLeaderboard(stravaIds.STINSON_PANTOLL_ID, false, '', callback);
+            cacheLeaderboard(stravaIds.STINSON_PANTOLL_ID, false, '', clubId, callback);
         }
     ], function (err, results) {
         if (err !== undefined) {
@@ -113,18 +110,18 @@ var cacheData = function() {
     });
 }
 
-var cacheLatestActivities = function(callback) {
+var cacheLatestActivities = function(clubId, callback) {
     console.log('[Strava] Updating activities in database/cache');
     axios.get("/clubs/"+clubId+"/activities?per_page=150")
         .then(function (response) {
-            processActivities(response.data, callback);
+            processActivities(clubId, response.data, callback);
         })
         .catch(function (error) {
             console.log(error);
         });
 };
 
-var processActivities = function(json, callback) {
+var processActivities = function(clubId, json, callback) {
     json.forEach(function storeActivity(activity) {
         var startDate = moment.utc(activity.start_date, "YYYY-MM-DDThh:mm:ssZ");
         var shared = 0;
@@ -150,26 +147,26 @@ var processActivities = function(json, callback) {
     callback();
 };
 
-var cacheClubMembers = function(callback) {
+var cacheClubMembers = function(clubId, callback) {
     console.log('[Strava] Updating members in database/cache');
-    retrieveClubMembers(function processMembers(json){
-        database.addMembers(moment().utc().year(), JSON.stringify(json));
+    retrieveClubMembers(clubId, function processMembers(json){
+        database.addMembers(moment().utc().year(), clubId, JSON.stringify(json));
         json.forEach(function(member) {athletesSet.add(member.id)});
         console.log('We processed ' + json.length + ' Strava members');
         callback();
     });
 }
 
-var cacheLeaderboard = function(segmentId, onlyYtd, year, callback) {
-    retrieveSegment(segmentId, onlyYtd, function processLeaderboard(json){
-        database.addLeaderboard(segmentId, year, JSON.stringify(json));
+var cacheLeaderboard = function(segmentId, onlyYtd, year, clubId, callback) {
+    retrieveSegment(segmentId, onlyYtd, clubId, function processLeaderboard(json){
+        database.addLeaderboard(segmentId, year, clubId, JSON.stringify(json));
         callback();
     });
 }
 
 /******************************************************************************/
 module.exports = {
-    cacheData: function(){cacheData()},
+    cacheData: function(){cacheData(197635);cacheData(2016)},
     retrieveClubMembers: function(cb){retrieveClubMembers(cb)},
     retrieveSegment: function(id, cb){retrieveSegment(id, true, cb)}
 };
