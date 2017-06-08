@@ -3,7 +3,6 @@
 const moment = require('moment');
 const series = require('run-series')
 const database = require('./database');
-const strava = require('./strava');
 const stravaIds = require('./stravaIds');
 const jerseyIds = require('./jerseyIds');
 const notification = require('./notifications');

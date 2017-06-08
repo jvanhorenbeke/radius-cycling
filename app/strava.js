@@ -22,7 +22,7 @@ var retrieveClubMembers = function(clubId, callback) {
 };
 
 var retrieveSegment = function(segmentId, onlyYtd, clubId, callback) {
-    console.log('[Strava] retrieving Segment: ' + segmentId);
+    console.log('[Strava] retrieving Segment: ' + segmentId + ' for ClubId=' + clubId);
     var timeFilter = '';
     if (onlyYtd) { timeFilter = "&date_range=this_year"; }
     axios.get("/segments/"+segmentId+"/leaderboard?club_id="+clubId+"&per_page=50"+timeFilter)
@@ -53,6 +53,7 @@ var cacheData = function(clubId) {
     var year = moment().utc().year();
     series([
         function(callback) {
+            athletesSet = new Set();
             cacheClubMembers(clubId, callback);
         },
         function(callback) {
@@ -148,11 +149,11 @@ var processActivities = function(clubId, json, callback) {
 };
 
 var cacheClubMembers = function(clubId, callback) {
-    console.log('[Strava] Updating members in database/cache');
+    console.log('[Strava] Updating members in database/cache for ClubId='+clubId);
     retrieveClubMembers(clubId, function processMembers(json){
         database.addMembers(moment().utc().year(), clubId, JSON.stringify(json));
         json.forEach(function(member) {athletesSet.add(member.id)});
-        console.log('We processed ' + json.length + ' Strava members');
+        console.log('We processed ' + json.length + ' Strava members for ClubId='+clubId);
         callback();
     });
 }
@@ -166,7 +167,8 @@ var cacheLeaderboard = function(segmentId, onlyYtd, year, clubId, callback) {
 
 /******************************************************************************/
 module.exports = {
-    cacheData: function(){cacheData(197635);cacheData(2016)},
-    retrieveClubMembers: function(cb){retrieveClubMembers(cb)},
-    retrieveSegment: function(id, cb){retrieveSegment(id, true, cb)}
+    cacheData: function(){cacheData(197635);cacheData(2016)}
+    // ,
+    // retrieveClubMembers: function(cb){retrieveClubMembers(cb)},
+    // retrieveSegment: function(id, cb){retrieveSegment(id, true, cb)}
 };
