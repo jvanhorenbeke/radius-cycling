@@ -6,9 +6,6 @@ const strava = require('./strava');
 const rankings = require('./rankings');
 const server = new Hapi.Server();
 
-// Strava Specific TEMP
-const clubId = '197635';
-
 // let heroku set the port
 var herokuPort = process.env.PORT || 3000
 server.connection({ port: herokuPort });
@@ -73,8 +70,9 @@ server.route({
 
 server.route({
     method: 'GET',
-    path: '/radius/{year?}',
+    path: '/radius/{clubId}/{year?}',
     handler: function (request, reply) {
+        var clubId = encodeURIComponent(request.params.clubId)
         var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
         rankings.retrieveRadiusLeaderboard(year, clubId, function(data) {
             reply(data);
@@ -84,8 +82,9 @@ server.route({
 
 server.route({
     method: 'GET',
-    path: '/sprinters/{year?}',
+    path: '/sprinters/{clubId}/{year?}',
     handler: function (request, reply) {
+        var clubId = encodeURIComponent(request.params.clubId)
         var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
         rankings.retrieveSprinterLeaderboard(year, clubId, function(data) {
             reply(data);
@@ -95,8 +94,9 @@ server.route({
 
 server.route({
     method: 'GET',
-    path: '/polka/{year?}',
+    path: '/polka/{clubId}/{year?}',
     handler: function (request, reply) {
+        var clubId = encodeURIComponent(request.params.clubId)
         var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
         rankings.retrievePolkaLeaderboard(year, clubId, function(data) {
             reply(data);
@@ -106,8 +106,9 @@ server.route({
 
 server.route({
     method: 'GET',
-    path: '/general/{year?}',
+    path: '/general/{clubId}/{year?}',
     handler: function (request, reply) {
+        var clubId = encodeURIComponent(request.params.clubId)
         var year = request.params.year ? encodeURIComponent(request.params.year) : moment().utc().year();
         rankings.retrieveGeneralLeaderboard(year, clubId, function(data) {
             reply(data);
@@ -150,6 +151,14 @@ server.register(require('inert'), (err) => {
         path: '/',
         handler: function (request, reply) {
             reply.file('./public/index.html');
+        }
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/m2',
+        handler: function (request, reply) {
+            reply().redirect('/?clubId=2016');
         }
     });
 

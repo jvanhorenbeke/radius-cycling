@@ -1,6 +1,7 @@
 var serverUrl = '';
 var activityUrl = 'https://www.strava.com/activities/';
 var athleteUrl = 'https://www.strava.com/athletes/';
+const defaultClubId = '197635'; //Default clubId is Radius-Cycling team
 
 //Compose template string
 String.prototype.compose = (function (){
@@ -14,14 +15,14 @@ String.prototype.compose = (function (){
 // --------------- Club Activities ---------------
 var loadClubRankings = function() {
 
-    var params = "";
+    var params = "/";
+    var clubId = getUrlVar('clubid');
+    params += clubId != "" ? clubId : defaultClubId;
+
     var year = getUrlVar('year');
     params += year != "" ? "/" + year : "";
 
-    var clubId = getUrlVar('clubid');
-    params += clubId != "" ? "/" + clubId : "";
-
-    $.ajax({url: serverUrl + "/boards/" + params})
+    $.ajax({url: serverUrl + "/boards" + params})
      .done(function (data) {
        $.each(data, function(i, board) {
            if (board.name == "general") {

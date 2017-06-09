@@ -107,13 +107,13 @@ var cacheData = function(clubId) {
             console.log('Something went wrong: ' + err);
             return;
         }
-        console.log('[Strava] Done updating database/cache');
+        console.log('[Strava] Done updating database/cache for clubId=' + clubId);
     });
 }
 
 var cacheLatestActivities = function(clubId, callback) {
     console.log('[Strava] Updating activities in database/cache');
-    axios.get("/clubs/"+clubId+"/activities?per_page=150")
+    axios.get("/clubs/"+clubId+"/activities?per_page=200")
         .then(function (response) {
             processActivities(clubId, response.data, callback);
         })
@@ -167,8 +167,11 @@ var cacheLeaderboard = function(segmentId, onlyYtd, year, clubId, callback) {
 
 /******************************************************************************/
 module.exports = {
-    cacheData: function(){cacheData(197635);cacheData(2016)}
-    // ,
-    // retrieveClubMembers: function(cb){retrieveClubMembers(cb)},
-    // retrieveSegment: function(id, cb){retrieveSegment(id, true, cb)}
+    cacheData: function(){
+        cacheData(197635);
+        setTimeout(function(){ 
+            cacheData(2016);
+            console.log('processing m2 data');
+        }, 60000);
+    }
 };
