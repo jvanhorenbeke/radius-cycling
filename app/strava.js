@@ -45,6 +45,16 @@ var retrieveRelatedActivity = function(activityId, callback) {
         });
 }
 
+var retrieveActivity = function(activityId, callback) {
+    axios.get("/activities/"+activityId)
+        .then(function (response) {
+            callback(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
+
 /*******************************************************************************
  Cache Strava Activities and Members:
 *******************************************************************************/
@@ -148,6 +158,53 @@ var processActivities = function(clubId, json, callback) {
     callback();
 };
 
+var processSingleActivity = function(activity) {
+
+    var clubId = 197635;
+    console.log(activity);
+
+    if (activity.id >= 982921122) {
+        console.log(activity.id);
+        return;
+    }
+
+    var startDate = moment.utc(activity.start_date, "YYYY-MM-DDThh:mm:ssZ");
+    var shared = 0;
+    
+    if (activity.athlete.id != 20965599 || 
+        activity.athlete.id != 14531982 || 
+        activity.athlete.id != 2943525 || 
+        activity.athlete.id != 4190437 || 
+        activity.athlete.id != 9757503 || 
+        activity.athlete.id != 2339027 || 
+        activity.athlete.id != 74954 || 
+        activity.athlete.id != 3014007 || 
+        activity.athlete.id != 9022454 || 
+        activity.athlete.id != 1911372 || 
+        activity.athlete.id != 1211014) {
+        console.log("lastActivityId="+activity.id)
+        return;
+    }
+
+    if (activity.type == 'Ride' && activity.commute == false && activity.athlete_count > 1) {
+        retrieveRelatedActivity(activity.id, function(relatedActivities){
+            relatedActivities.forEach(function(relatedActivity) {
+                if (athletesSet.has(relatedActivity.athlete.id)) {
+                    shared = 1;
+                }
+            });
+            database.addActivity(startDate.unix(), activity.id, clubId,
+                                 activity.athlete.id, activity.type, shared,
+                                 JSON.stringify(activity),
+                                 JSON.stringify(relatedActivities));
+        })
+    } else {
+        database.addActivity(startDate.unix(), activity.id, clubId,
+                             activity.athlete.id, activity.type, 0,
+                             JSON.stringify(activity), '');
+    }
+};
+
 var cacheClubMembers = function(clubId, callback) {
     console.log('[Strava] Updating members in database/cache for ClubId='+clubId);
     retrieveClubMembers(clubId, function processMembers(json){
@@ -168,10 +225,17 @@ var cacheLeaderboard = function(segmentId, onlyYtd, year, clubId, callback) {
 /******************************************************************************/
 module.exports = {
     cacheData: function(){
-        cacheData(197635);
-        setTimeout(function(){ 
-            cacheData(2016);
-            console.log('processing m2 data');
-        }, 60000);
+        var x = 906499301
+        while (x < 906499900) {
+            retrieveActivity(x, processSingleActivity);
+            x = x + 1
+            console.log("value of x="+x);
+        }
+            
+        // cacheData(197635);
+        // setTimeout(function(){ 
+        //     cacheData(2016);
+        //     console.log('processing m2 data');
+        // }, 60000);
     }
 };
