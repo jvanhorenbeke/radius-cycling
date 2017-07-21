@@ -139,7 +139,17 @@ var generateYellowMaillotRankings = function(gcStandings) {
   };
 }
 
+var loadClubHeader = function() {
+    var clubId = getUrlVar('clubid');
+    var clubHeader = '<h1><img src="https://dgalywyr863hv.cloudfront.net/pictures/clubs/197635/4257457/2/medium.jpg" /> Radius Cycling</h1>';
+    if (clubId != "" && clubId==2016) {
+        clubHeader = '<h1><img src="https://dgalywyr863hv.cloudfront.net/pictures/clubs/2016/1229525/1/medium.jpg" /> M2 Revolution</h1>';
+    }
+    $('#clubHeader').append(clubHeader);
+}
+
 // -------------------------- document ready -----------------------------------
 $(document).ready(function() {
+    loadClubHeader();
     loadClubRankings();
 });
