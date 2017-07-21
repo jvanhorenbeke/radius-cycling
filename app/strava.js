@@ -161,7 +161,6 @@ var processActivities = function(clubId, json, callback) {
 var processSingleActivity = function(activity) {
 
     var clubId = 197635;
-    console.log(activity);
 
     if (activity.id >= 982921122) {
         console.log(activity.id);
@@ -170,21 +169,25 @@ var processSingleActivity = function(activity) {
 
     var startDate = moment.utc(activity.start_date, "YYYY-MM-DDThh:mm:ssZ");
     var shared = 0;
-    
-    if (activity.athlete.id != 20965599 || 
-        activity.athlete.id != 14531982 || 
-        activity.athlete.id != 2943525 || 
-        activity.athlete.id != 4190437 || 
-        activity.athlete.id != 9757503 || 
-        activity.athlete.id != 2339027 || 
-        activity.athlete.id != 74954 || 
-        activity.athlete.id != 3014007 || 
-        activity.athlete.id != 9022454 || 
-        activity.athlete.id != 1911372 || 
+
+    if (activity.athlete.id != 20965599 ||
+        activity.athlete.id != 14531982 ||
+        activity.athlete.id != 2943525 ||
+        activity.athlete.id != 4190437 ||
+        activity.athlete.id != 9757503 ||
+        activity.athlete.id != 2339027 ||
+        activity.athlete.id != 74954 ||
+        activity.athlete.id != 3014007 ||
+        activity.athlete.id != 9022454 ||
+        activity.athlete.id != 1911372 ||
         activity.athlete.id != 1211014) {
-        console.log("lastActivityId="+activity.id)
+        // console.log("lastActivityId="+activity.id)
         return;
     }
+
+    console.log("+++++++++++++++++++++++++++++++++++++++++++lastActivityId="+activity.id)
+    console.log(activity);
+    return;
 
     if (activity.type == 'Ride' && activity.commute == false && activity.athlete_count > 1) {
         retrieveRelatedActivity(activity.id, function(relatedActivities){
@@ -225,15 +228,22 @@ var cacheLeaderboard = function(segmentId, onlyYtd, year, clubId, callback) {
 /******************************************************************************/
 module.exports = {
     cacheData: function(){
-        var x = 906499301
-        while (x < 906499900) {
-            retrieveActivity(x, processSingleActivity);
-            x = x + 1
+        var x = 906499301;
+        var milisInMinutes = 60*1000;
+        setInterval(function() {
+            console.log('Retrieving old activities');
+            var count = 0;
+            while (x < 982921122 && count < 500) {
+                retrieveActivity(x, processSingleActivity);
+                x = x + 1;
+                count++;
+            }
+            count = 0;
             console.log("value of x="+x);
-        }
-            
+        }, 15*milisInMinutes);
+
         // cacheData(197635);
-        // setTimeout(function(){ 
+        // setTimeout(function(){
         //     cacheData(2016);
         //     console.log('processing m2 data');
         // }, 60000);
